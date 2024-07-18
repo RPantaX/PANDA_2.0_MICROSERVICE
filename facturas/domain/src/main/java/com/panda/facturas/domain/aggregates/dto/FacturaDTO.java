@@ -1,8 +1,5 @@
 package com.panda.facturas.domain.aggregates.dto;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
 import lombok.*;
 
 import java.math.BigDecimal;
