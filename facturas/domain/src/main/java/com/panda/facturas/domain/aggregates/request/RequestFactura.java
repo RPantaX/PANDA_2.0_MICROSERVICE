@@ -1,8 +1,6 @@
 package com.panda.facturas.domain.aggregates.request;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -10,6 +8,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
+@Getter
 public class RequestFactura {
     private String clienteRuc;
     private String observacion;
