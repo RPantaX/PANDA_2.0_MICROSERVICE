@@ -1,0 +1,15 @@
+package com.panda.msguiatransporte.ports.in;
+
+import com.panda.msguiatransporte.aggregates.dto.PagadorFleteDTO;
+import com.panda.msguiatransporte.aggregates.request.RequestPagadorFlete;
+
+import java.util.List;
+import java.util.Optional;
+
+public interface PagadorFleteServiceIn {
+    PagadorFleteDTO crearPagadorFleteIn(RequestPagadorFlete requestPagadorFlete);
+    Optional<PagadorFleteDTO> buscarPagadorPorRucIn (String ruc);
+    List<PagadorFleteDTO> buscarPagadoresIn();
+    PagadorFleteDTO actualizarPagadorIn(String ruc, RequestPagadorFlete requestPagadorFlete);
+    PagadorFleteDTO eliminarPagadorIn(String ruc);
+}

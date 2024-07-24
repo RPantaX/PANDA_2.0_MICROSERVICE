@@ -3,16 +3,21 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>com.panda</groupId>
-        <artifactId>facturas</artifactId>
+        <artifactId>ms-guiatransporte</artifactId>
         <version>0.0.1-SNAPSHOT</version>
     </parent>
-    <artifactId>infraestructure</artifactId>
-    <name>Archetype - infraestructure</name>
+    <artifactId>application</artifactId>
+    <name>Archetype - application</name>
     <url>http://maven.apache.org</url>
     <dependencies>
         <dependency>
             <groupId>com.panda</groupId>
             <artifactId>domain</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>com.panda</groupId>
+            <artifactId>infraestructure</artifactId>
             <version>0.0.1-SNAPSHOT</version>
         </dependency>
     </dependencies>
