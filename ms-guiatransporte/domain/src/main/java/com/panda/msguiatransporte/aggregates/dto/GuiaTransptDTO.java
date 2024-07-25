@@ -12,6 +12,7 @@ import java.sql.Timestamp;
 @NoArgsConstructor
 @Builder
 public class GuiaTransptDTO {
+
     private Long guiaTranspNumero;
 
     private String guiaTranspSerie;
@@ -46,7 +47,7 @@ public class GuiaTransptDTO {
 
     private String pagFleteRuc;
 
-    private Long facturaNumero;
+    private String facturaSerienumero;
 
     private String condDocIdentidad;
 

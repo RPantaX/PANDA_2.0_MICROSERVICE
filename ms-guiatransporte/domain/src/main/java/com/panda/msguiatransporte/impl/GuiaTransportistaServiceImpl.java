@@ -21,8 +21,8 @@ public class GuiaTransportistaServiceImpl implements GuiaTransportistaIn {
     }
 
     @Override
-    public Optional<GuiaTransptDTO> obtenerGuiaTransportistaIn(String guiaTransptSerieNumero) {
-        return guiaTransportistaOut.obtenerGuiaTransportistaOut(guiaTransptSerieNumero);
+    public Optional<GuiaTransptDTO> obtenerGuiaTransportistaIn(Long guiaTranspNumero, String guiaTranspSerie) {
+        return guiaTransportistaOut.obtenerGuiaTransportistaOut(guiaTranspNumero,guiaTranspSerie);
     }
 
     @Override

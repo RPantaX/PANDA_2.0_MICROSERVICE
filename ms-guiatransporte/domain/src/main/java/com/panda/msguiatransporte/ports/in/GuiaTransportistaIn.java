@@ -9,7 +9,7 @@ import java.util.Optional;
 public interface GuiaTransportistaIn {
 
     GuiaTransptDTO crearGuiaTransportistaIn(RequestGuiaTranspt requestGuiaTranspt);
-    Optional<GuiaTransptDTO> obtenerGuiaTransportistaIn(String guiaTransptSerieNumero);
+    Optional<GuiaTransptDTO> obtenerGuiaTransportistaIn(Long guiaTranspNumero, String guiaTranspSerie);
     List<GuiaTransptDTO> obtenerGuiaTransportistasIn();
 
 }
