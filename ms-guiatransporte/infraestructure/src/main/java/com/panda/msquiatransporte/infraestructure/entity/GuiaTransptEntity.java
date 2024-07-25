@@ -1,5 +1,6 @@
 package com.panda.msquiatransporte.infraestructure.entity;
 
+import com.panda.msquiatransporte.infraestructure.entity.compoundKeys.GuiaTransptId;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -8,6 +9,7 @@ import java.sql.Timestamp;
 
 @Entity
 @Table(name = "Guia_transportista")
+@IdClass(GuiaTransptId.class)
 @Setter
 @Getter
 @AllArgsConstructor

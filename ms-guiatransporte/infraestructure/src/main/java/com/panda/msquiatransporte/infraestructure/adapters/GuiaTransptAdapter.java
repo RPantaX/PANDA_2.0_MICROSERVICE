@@ -1,6 +1,7 @@
 package com.panda.msquiatransporte.infraestructure.adapters;
 
 import com.panda.msguiatransporte.aggregates.dto.GuiaTransptDTO;
+import com.panda.msguiatransporte.aggregates.exception.PandaAppExceptionNotFound;
 import com.panda.msguiatransporte.aggregates.request.RequestGuiaTranspt;
 import com.panda.msguiatransporte.ports.out.GuiaTransportistaOut;
 import com.panda.msquiatransporte.infraestructure.entity.GuiaTransptEntity;
@@ -11,6 +12,7 @@ import com.panda.msquiatransporte.infraestructure.repository.GuiaTransptReposito
 import com.panda.msquiatransporte.infraestructure.repository.PagadorFleteRepository;
 import com.panda.msquiatransporte.infraestructure.repository.RemitenteRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
@@ -56,13 +58,13 @@ public class GuiaTransptAdapter implements GuiaTransportistaOut {
     }
     private void validarExistenciaEntidades(RequestGuiaTranspt requestGuiaTranspt) {
         if (!destinatarioRepository.existsById(requestGuiaTranspt.getDestRuc())) {
-            throw new IllegalArgumentException("El destinatario no existe en la base de datos");
+            throw new PandaAppExceptionNotFound(HttpStatus.NOT_FOUND, "El destinatario con el ruc: " + requestGuiaTranspt.getDestRuc() + " no existe en la base de datos");
         }
         if (!pagadorFleteRepository.existsById(requestGuiaTranspt.getPagFleteRuc())) {
-            throw new IllegalArgumentException("El pagador flete no existe en la base de datos");
+            throw new PandaAppExceptionNotFound(HttpStatus.NOT_FOUND, "El pagador flete con el ruc:"+ requestGuiaTranspt.getPagFleteRuc() +" no existe en la base de datos" );
         }
         if (!remitenteRepository.existsById(requestGuiaTranspt.getRemitenteRuc())) {
-            throw new IllegalArgumentException("El remitente no existe en la base de datos");
+            throw new PandaAppExceptionNotFound(HttpStatus.NOT_FOUND, "El remitente con el ruc:"+ requestGuiaTranspt.getPagFleteRuc() +" no existe en la base de datos" );
         }
         // TODO: Validar el documento de identidad del conductor
     }

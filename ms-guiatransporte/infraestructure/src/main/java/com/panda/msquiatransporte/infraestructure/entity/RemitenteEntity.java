@@ -9,7 +9,7 @@ import lombok.*;
 import java.sql.Timestamp;
 
 @Entity
-@Table(name = "Destinatario")
+@Table(name = "Remitente")
 @Setter
 @Getter
 @AllArgsConstructor

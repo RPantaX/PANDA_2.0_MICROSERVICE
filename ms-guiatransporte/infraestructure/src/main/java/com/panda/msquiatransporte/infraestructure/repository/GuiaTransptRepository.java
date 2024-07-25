@@ -7,5 +7,4 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface GuiaTransptRepository extends JpaRepository<GuiaTransptEntity, GuiaTransptId> {
-    public GuiaTransptEntity findByGuiaTranspSerienumero(GuiaTransptId id);
 }
