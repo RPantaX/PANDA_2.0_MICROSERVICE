@@ -4,6 +4,7 @@ import com.panda.msguiatransporte.aggregates.dto.GuiaTransptDTO;
 import com.panda.msguiatransporte.aggregates.request.RequestGuiaTranspt;
 import com.panda.msguiatransporte.ports.in.GuiaTransportistaIn;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -11,7 +12,7 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/v1/ms-guia-transpportista")
+@RequestMapping("/v1/ms-guia-transportista/guiaTransportista")
 @RequiredArgsConstructor
 public class GuiaTransportistaController {
     private final GuiaTransportistaIn guiaTransportistaIn;
@@ -19,7 +20,7 @@ public class GuiaTransportistaController {
     @PostMapping("/crear")
     public ResponseEntity<GuiaTransptDTO> registrarGuiaTransportista(@RequestBody RequestGuiaTranspt guiaTranspt) {
         GuiaTransptDTO guiaTransptDTO = guiaTransportistaIn.crearGuiaTransportistaIn(guiaTranspt);
-        return ResponseEntity.ok(guiaTransptDTO);
+        return new ResponseEntity<>(guiaTransptDTO, HttpStatus.CREATED);
     }
 
     @GetMapping("/listar")
