@@ -1,7 +1,6 @@
 package com.panda.msguiatransporte.ports.in;
 
 import com.panda.msguiatransporte.aggregates.dto.RemitenteDTO;
-import com.panda.msguiatransporte.aggregates.request.RequestDestinatario;
 import com.panda.msguiatransporte.aggregates.request.RequestRemitente;
 
 import java.util.List;

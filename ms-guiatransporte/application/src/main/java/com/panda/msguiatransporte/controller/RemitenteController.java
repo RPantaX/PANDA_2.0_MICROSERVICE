@@ -3,7 +3,7 @@ package com.panda.msguiatransporte.controller;
 
 import com.panda.msguiatransporte.aggregates.dto.RemitenteDTO;
 import com.panda.msguiatransporte.aggregates.request.RequestRemitente;
-import com.panda.msguiatransporte.impl.RemitenteServiceImpl;
+import com.panda.msguiatransporte.ports.in.RemitenteServiceIn;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,7 +15,7 @@ import java.util.Optional;
 @RequestMapping("/v1/ms-guia-transportista/remitente")
 @RequiredArgsConstructor
 public class RemitenteController {
-    private final RemitenteServiceImpl remitenteService;
+    private final RemitenteServiceIn remitenteService;
     @PostMapping("/crear")
     public ResponseEntity<RemitenteDTO> registrarRemitente(@RequestBody RequestRemitente requestRemitente) {
         RemitenteDTO remitenteDTO = remitenteService.crearRemitenteIn(requestRemitente);

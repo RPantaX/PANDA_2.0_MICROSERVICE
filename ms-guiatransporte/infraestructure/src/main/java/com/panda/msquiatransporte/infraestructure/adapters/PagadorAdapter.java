@@ -27,7 +27,7 @@ public class PagadorAdapter implements PagadorFleteServiceOut {
     String tokenApi;
     @Override
     public PagadorFleteDTO crearPagadorFleteOut(RequestPagadorFlete requestPagadorFlete) {
-        if(!pagadorFleteRepository.existsById(requestPagadorFlete.getPagFleteRuc()))
+        if(pagadorFleteRepository.existsById(requestPagadorFlete.getPagFleteRuc()))
             throw new PandaExceptionBadRequest("El pagador de flete con el ruc:"+ requestPagadorFlete.getPagFleteRuc() +"ya existe en la base de datos");
         ResponseSunat responseSunat = getExecutionSunat(requestPagadorFlete.getPagFleteRuc());
         PagadorFleteEntity pagadorFleteEntity = crearPagadorFleteEnity(requestPagadorFlete, responseSunat);

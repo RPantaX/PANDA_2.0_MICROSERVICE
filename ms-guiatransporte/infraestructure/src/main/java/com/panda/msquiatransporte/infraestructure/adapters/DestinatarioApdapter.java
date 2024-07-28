@@ -32,7 +32,7 @@ public class DestinatarioApdapter implements DestinatarioServiceOut {
     @Override
     public DestinatarioDTO crearDestinatarioOut(RequestDestinatario requestDestinatario) {
         //validar ruc en la base de datos
-        if(!destinatarioRepository.existsById(requestDestinatario.getDestRuc()))
+        if(destinatarioRepository.existsById(requestDestinatario.getDestRuc()))
             throw new PandaExceptionBadRequest("El destinatario con el ruc:"+ requestDestinatario.getDestRuc() +"ya existe en la base de datos");
         ResponseSunat responseSunat = getExecutionSunat(requestDestinatario.getDestRuc());
         DestinatarioEntity destinatarioEntity = crearDestinatarioEntity(requestDestinatario, responseSunat);

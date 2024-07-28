@@ -27,7 +27,7 @@ public class RemitenteAdapter implements RemitenteServiceOut {
     String tokenApi;
     @Override
     public RemitenteDTO crearRemitenteOut(RequestRemitente requestRemitente) {
-        if(!remitenteRepository.existsById(requestRemitente.getRemitenteRuc()))
+        if(remitenteRepository.existsById(requestRemitente.getRemitenteRuc()))
             throw new PandaExceptionBadRequest("El remitente con el ruc:"+ requestRemitente.getRemitenteRuc() +"ya existe en la base de datos");
         ResponseSunat responseSunat = getExecutionSunat(requestRemitente.getRemitenteRuc());
         RemitenteEntity remitenteEntity = crearRemitenteEntity(requestRemitente, responseSunat);
@@ -84,7 +84,7 @@ public class RemitenteAdapter implements RemitenteServiceOut {
                 .build();
     }
     public ResponseSunat getExecutionSunat(String numero){
-        String authorization = "Bearer "+tokenApi;
+        String authorization = "Bearer " + tokenApi;
         return sunat.getInfoSunat(numero,authorization);
     }
     private Timestamp getTimestamp(){

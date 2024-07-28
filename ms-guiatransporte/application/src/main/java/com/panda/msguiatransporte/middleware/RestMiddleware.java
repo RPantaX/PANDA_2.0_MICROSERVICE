@@ -21,7 +21,7 @@ public class RestMiddleware extends ResponseEntityExceptionHandler {
         return new ResponseEntity<>(responseError, HttpStatus.NOT_FOUND);
     }
     @ExceptionHandler(PandaExceptionBadRequest.class) //maneja las excepciones que se le detallen a la clase que le hemos pasado.
-    private ResponseEntity<ResponseError> manejarPandaAppExceptionBadRequest(PandaAppExceptionNotFound exception, WebRequest webRequest){
+    private ResponseEntity<ResponseError> manejarPandaAppExceptionBadRequest(PandaExceptionBadRequest exception, WebRequest webRequest){
         ResponseError responseError = new ResponseError(new Date(), exception.getMensaje(), webRequest.getDescription(false));
         return new ResponseEntity<>(responseError, HttpStatus.BAD_REQUEST);
     }
