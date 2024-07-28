@@ -9,7 +9,5 @@ import org.springframework.http.HttpStatus;
 @AllArgsConstructor
 public class PandaAppExceptionNotFound extends RuntimeException {
     private static final long serialVersionUID=1L;
-
-    private HttpStatus estado;
     private String mensaje;
 }

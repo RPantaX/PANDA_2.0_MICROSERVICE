@@ -12,7 +12,6 @@ import com.panda.msquiatransporte.infraestructure.repository.GuiaTransptReposito
 import com.panda.msquiatransporte.infraestructure.repository.PagadorFleteRepository;
 import com.panda.msquiatransporte.infraestructure.repository.RemitenteRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
@@ -58,13 +57,13 @@ public class GuiaTransptAdapter implements GuiaTransportistaOut {
     }
     private void validarExistenciaEntidades(RequestGuiaTranspt requestGuiaTranspt) {
         if (!destinatarioRepository.existsById(requestGuiaTranspt.getDestRuc())) {
-            throw new PandaAppExceptionNotFound(HttpStatus.NOT_FOUND, "El destinatario con el ruc: " + requestGuiaTranspt.getDestRuc() + " no existe en la base de datos");
+            throw new PandaAppExceptionNotFound("El destinatario con el ruc: " + requestGuiaTranspt.getDestRuc() + " no existe en la base de datos");
         }
         if (!pagadorFleteRepository.existsById(requestGuiaTranspt.getPagFleteRuc())) {
-            throw new PandaAppExceptionNotFound(HttpStatus.NOT_FOUND, "El pagador flete con el ruc:"+ requestGuiaTranspt.getPagFleteRuc() +" no existe en la base de datos" );
+            throw new PandaAppExceptionNotFound("El pagador flete con el ruc:"+ requestGuiaTranspt.getPagFleteRuc() +" no existe en la base de datos" );
         }
         if (!remitenteRepository.existsById(requestGuiaTranspt.getRemitenteRuc())) {
-            throw new PandaAppExceptionNotFound(HttpStatus.NOT_FOUND, "El remitente con el ruc:"+ requestGuiaTranspt.getPagFleteRuc() +" no existe en la base de datos" );
+            throw new PandaAppExceptionNotFound("El remitente con el ruc:"+ requestGuiaTranspt.getPagFleteRuc() +" no existe en la base de datos" );
         }
         // TODO: Validar el documento de identidad del conductor
     }
