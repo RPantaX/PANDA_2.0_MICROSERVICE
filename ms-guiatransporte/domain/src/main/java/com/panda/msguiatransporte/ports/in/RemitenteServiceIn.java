@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface RemitenteServiceIn {
-    RemitenteDTO crearRemitenteIn(RequestDestinatario requestDestinatario);
+    RemitenteDTO crearRemitenteIn(RequestRemitente requestRemitente);
     Optional<RemitenteDTO> buscarRemitentePorRucIn(String ruc);
     List<RemitenteDTO> buscarRemitentesIn();
     RemitenteDTO actualizarRemitenteIn(String ruc, RequestRemitente requestRemitente);

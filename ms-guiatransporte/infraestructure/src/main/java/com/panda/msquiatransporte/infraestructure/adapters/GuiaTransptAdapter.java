@@ -16,7 +16,6 @@ import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -48,12 +47,12 @@ public class GuiaTransptAdapter implements GuiaTransportistaOut {
     @Override
     public List<GuiaTransptDTO> obtenerGuiaTransportistasOut() {
         List<GuiaTransptEntity> guiaTransptEntities = guiaTransptRepository.findAll();
-        List<GuiaTransptDTO> guiaTransptDTOs = new ArrayList<>();
+        /*List<GuiaTransptDTO> guiaTransptDTOs = new ArrayList<>();
         for(GuiaTransptEntity guiaTransptEntity : guiaTransptEntities){
             GuiaTransptDTO guiaTransptDTO = guiaTransptMapper.mapGuiaTransptToDTO(guiaTransptEntity);
             guiaTransptDTOs.add(guiaTransptDTO);
-        }
-        return guiaTransptDTOs;
+        }*/
+        return guiaTransptEntities.stream().map(guiaTransptMapper::mapGuiaTransptToDTO).toList();
     }
     private void validarExistenciaEntidades(RequestGuiaTranspt requestGuiaTranspt) {
         if (!destinatarioRepository.existsById(requestGuiaTranspt.getDestRuc())) {

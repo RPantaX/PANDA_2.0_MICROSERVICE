@@ -16,8 +16,8 @@ import java.util.Optional;
 public class RemitenteServiceImpl implements RemitenteServiceIn {
     private final RemitenteServiceOut remitenteServiceOut;
     @Override
-    public RemitenteDTO crearRemitenteIn(RequestDestinatario requestDestinatario) {
-        return remitenteServiceOut.crearRemitenteOut(requestDestinatario);
+    public RemitenteDTO crearRemitenteIn(RequestRemitente requestRemitente) {
+        return remitenteServiceOut.crearRemitenteOut(requestRemitente);
     }
 
     @Override

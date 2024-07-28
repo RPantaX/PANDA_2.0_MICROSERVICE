@@ -1,39 +1,96 @@
 package com.panda.msquiatransporte.infraestructure.adapters;
 
 import com.panda.msguiatransporte.aggregates.dto.PagadorFleteDTO;
+import com.panda.msguiatransporte.aggregates.exception.PandaExceptionBadRequest;
 import com.panda.msguiatransporte.aggregates.request.RequestPagadorFlete;
+import com.panda.msguiatransporte.aggregates.response.ResponseSunat;
 import com.panda.msguiatransporte.ports.out.PagadorFleteServiceOut;
+import com.panda.msquiatransporte.infraestructure.entity.PagadorFleteEntity;
+import com.panda.msquiatransporte.infraestructure.mapper.PagadorFleteMapper;
+import com.panda.msquiatransporte.infraestructure.repository.PagadorFleteRepository;
+import com.panda.msquiatransporte.infraestructure.rest.client.ClienteSunat;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.sql.Timestamp;
 import java.util.List;
 import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
 public class PagadorAdapter implements PagadorFleteServiceOut {
+    private final PagadorFleteRepository pagadorFleteRepository;
+    private final ClienteSunat sunat;
+    private final PagadorFleteMapper pagadorFleteMapper;
+    @Value("${token.api}")
+    String tokenApi;
     @Override
     public PagadorFleteDTO crearPagadorFleteOut(RequestPagadorFlete requestPagadorFlete) {
-        return null;
+        if(!pagadorFleteRepository.existsById(requestPagadorFlete.getPagFleteRuc()))
+            throw new PandaExceptionBadRequest("El pagador de flete con el ruc:"+ requestPagadorFlete.getPagFleteRuc() +"ya existe en la base de datos");
+        ResponseSunat responseSunat = getExecutionSunat(requestPagadorFlete.getPagFleteRuc());
+        PagadorFleteEntity pagadorFleteEntity = crearPagadorFleteEnity(requestPagadorFlete, responseSunat);
+        return pagadorFleteMapper.mapPagadorFleteToDTO(pagadorFleteEntity);
     }
 
     @Override
     public Optional<PagadorFleteDTO> buscarPagadorPorRucOut(String ruc) {
-        return Optional.empty();
+        if(!pagadorFleteRepository.existsById(ruc)) throw new PandaExceptionBadRequest("El pagador de flete con el ruc: " +ruc +" no existe");
+        return pagadorFleteRepository.findById(ruc).map(pagadorFleteMapper::mapPagadorFleteToDTO);
     }
 
     @Override
     public List<PagadorFleteDTO> buscarPagadoresOut() {
-        return List.of();
+        List<PagadorFleteEntity> pagadorFleteEntities = pagadorFleteRepository.findAll();
+        return pagadorFleteEntities.stream().map(pagadorFleteMapper::mapPagadorFleteToDTO).toList();
     }
 
     @Override
     public PagadorFleteDTO actualizarPagadorOut(String ruc, RequestPagadorFlete requestPagadorFlete) {
-        return null;
+        if(!pagadorFleteRepository.existsById(ruc)) throw new PandaExceptionBadRequest("El pagador de flete con el ruc: " +ruc +" no existe");
+        Optional<PagadorFleteEntity> pagadorFleteEntityOptional = pagadorFleteRepository.findById(ruc);
+        ResponseSunat responseSunat = getExecutionSunat(requestPagadorFlete.getPagFleteRuc());
+        PagadorFleteEntity pagadorFleteEntity = pagadorFleteRepository.save(getEntityUpdate(responseSunat, pagadorFleteEntityOptional.get(), requestPagadorFlete));
+        return pagadorFleteMapper.mapPagadorFleteToDTO(pagadorFleteEntity);
     }
 
     @Override
     public PagadorFleteDTO eliminarPagadorOut(String ruc) {
-        return null;
+        if(!pagadorFleteRepository.existsById(ruc)) throw new PandaExceptionBadRequest("El pagador de flete con el ruc: " +ruc +" no existe");
+        Optional<PagadorFleteEntity> pagadorFleteEntityOptional = pagadorFleteRepository.findById(ruc);
+        pagadorFleteEntityOptional.get().setEstado(false);
+        pagadorFleteEntityOptional.get().setUsuarioModificador("PRUEBA");
+        pagadorFleteEntityOptional.get().setEliminadoEn(getTimestamp());
+        PagadorFleteEntity pagadorFleteEntity=pagadorFleteRepository.save(pagadorFleteEntityOptional.get());
+        return pagadorFleteMapper.mapPagadorFleteToDTO(pagadorFleteEntity);
+    }
+
+    private PagadorFleteEntity getEntityUpdate(ResponseSunat sunat, PagadorFleteEntity pagadorFleteEntity, RequestPagadorFlete requestPagadorFlete){
+        pagadorFleteEntity.setPagFleteRazonSocial(sunat.getRazonSocial());
+        pagadorFleteEntity.setPagFleteDireccion(sunat.getDireccion());
+        pagadorFleteEntity.setEmail(requestPagadorFlete.getEmail());
+        pagadorFleteEntity.setUsuarioModificador("PRUEBA");
+        pagadorFleteEntity.setModificadoEn(getTimestamp());
+        return pagadorFleteEntity;
+    }
+    private PagadorFleteEntity crearPagadorFleteEnity(RequestPagadorFlete requestPagadorFlete, ResponseSunat responseSunat) {
+        return PagadorFleteEntity.builder()
+                .pagFleteRuc(requestPagadorFlete.getPagFleteRuc())
+                .pagFleteDireccion(responseSunat.getDireccion())
+                .email(requestPagadorFlete.getEmail())
+                .pagFleteRazonSocial(responseSunat.getRazonSocial())
+                .estado(true)
+                .usuarioModificador("PRUEBA")
+                .creadoEn(getTimestamp())
+                .build();
+    }
+    public ResponseSunat getExecutionSunat(String numero){
+        String authorization = "Bearer "+tokenApi;
+        return sunat.getInfoSunat(numero,authorization);
+    }
+    private Timestamp getTimestamp(){
+        long currentTime = System.currentTimeMillis();
+        return new Timestamp(currentTime);
     }
 }
