@@ -31,7 +31,7 @@ public class PagadorAdapter implements PagadorFleteServiceOut {
             throw new PandaExceptionBadRequest("El pagador de flete con el ruc:"+ requestPagadorFlete.getPagFleteRuc() +"ya existe en la base de datos");
         ResponseSunat responseSunat = getExecutionSunat(requestPagadorFlete.getPagFleteRuc());
         PagadorFleteEntity pagadorFleteEntity = crearPagadorFleteEnity(requestPagadorFlete, responseSunat);
-        return pagadorFleteMapper.mapPagadorFleteToDTO(pagadorFleteEntity);
+        return pagadorFleteMapper.mapPagadorFleteToDTO(pagadorFleteRepository.save(pagadorFleteEntity));
     }
 
     @Override

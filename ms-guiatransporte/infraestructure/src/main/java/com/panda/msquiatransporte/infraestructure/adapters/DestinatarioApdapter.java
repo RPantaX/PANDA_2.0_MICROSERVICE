@@ -36,7 +36,7 @@ public class DestinatarioApdapter implements DestinatarioServiceOut {
             throw new PandaExceptionBadRequest("El destinatario con el ruc:"+ requestDestinatario.getDestRuc() +"ya existe en la base de datos");
         ResponseSunat responseSunat = getExecutionSunat(requestDestinatario.getDestRuc());
         DestinatarioEntity destinatarioEntity = crearDestinatarioEntity(requestDestinatario, responseSunat);
-        return destinatarioMapper.mapDestinatarioToDTO(destinatarioEntity);
+        return destinatarioMapper.mapDestinatarioToDTO(destinatarioRepository.save(destinatarioEntity));
     }
 
     @Override
