@@ -31,7 +31,7 @@ public class RemitenteAdapter implements RemitenteServiceOut {
             throw new PandaExceptionBadRequest("El remitente con el ruc:"+ requestRemitente.getRemitenteRuc() +"ya existe en la base de datos");
         ResponseSunat responseSunat = getExecutionSunat(requestRemitente.getRemitenteRuc());
         RemitenteEntity remitenteEntity = crearRemitenteEntity(requestRemitente, responseSunat);
-        return remitenteMapper.mapRemitenteToDTO(remitenteEntity);
+        return remitenteMapper.mapRemitenteToDTO(remitenteRepository.save(remitenteEntity));
     }
 
     @Override
