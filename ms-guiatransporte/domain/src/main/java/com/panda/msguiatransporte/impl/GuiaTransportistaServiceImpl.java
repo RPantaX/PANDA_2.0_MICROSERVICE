@@ -29,4 +29,9 @@ public class GuiaTransportistaServiceImpl implements GuiaTransportistaIn {
     public List<GuiaTransptDTO> obtenerGuiaTransportistasIn() {
         return guiaTransportistaOut.obtenerGuiaTransportistasOut();
     }
+
+    @Override
+    public GuiaTransptDTO referenciarFacturaAGuiaTransptIn(String guiaTransptSerieNumero, String facturaSerieNumero) {
+        return guiaTransportistaOut.referenciarFacturaAGuiaTransptOut(guiaTransptSerieNumero,facturaSerieNumero);
+    }
 }

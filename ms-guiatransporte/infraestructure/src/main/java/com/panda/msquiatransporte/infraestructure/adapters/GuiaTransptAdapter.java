@@ -52,8 +52,18 @@ public class GuiaTransptAdapter implements GuiaTransportistaOut {
             GuiaTransptDTO guiaTransptDTO = guiaTransptMapper.mapGuiaTransptToDTO(guiaTransptEntity);
             guiaTransptDTOs.add(guiaTransptDTO);
         }*/
+        //programación funcional
         return guiaTransptEntities.stream().map(guiaTransptMapper::mapGuiaTransptToDTO).toList();
     }
+
+    @Override
+    public GuiaTransptDTO referenciarFacturaAGuiaTransptOut(String guiaTransptSerieNumero, String facturaSerieNumero) {
+        Optional<GuiaTransptEntity> guiaTransptSaved = guiaTransptRepository.findByGuiaTranspSerienumero(guiaTransptSerieNumero);
+        guiaTransptSaved.get().setFacturaSerienumero(facturaSerieNumero);
+        GuiaTransptEntity guiaTransptUpdated = guiaTransptRepository.save(guiaTransptSaved.get());
+        return guiaTransptMapper.mapGuiaTransptToDTO(guiaTransptUpdated);
+    }
+
     private void validarExistenciaEntidades(RequestGuiaTranspt requestGuiaTranspt) {
         if (!destinatarioRepository.existsById(requestGuiaTranspt.getDestRuc())) {
             throw new PandaAppExceptionNotFound("El destinatario con el ruc: " + requestGuiaTranspt.getDestRuc() + " no existe en la base de datos");

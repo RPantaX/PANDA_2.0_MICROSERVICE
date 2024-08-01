@@ -10,4 +10,5 @@ public interface GuiaTransportistaOut {
     GuiaTransptDTO crearGuiaTransportistaOut(RequestGuiaTranspt requestGuiaTranspt);
     Optional<GuiaTransptDTO> obtenerGuiaTransportistaOut(Long guiaTranspNumero, String guiaTranspSerie);
     List<GuiaTransptDTO> obtenerGuiaTransportistasOut();
+    GuiaTransptDTO referenciarFacturaAGuiaTransptOut(String guiaTransptSerieNumero, String facturaSerieNumero);
 }

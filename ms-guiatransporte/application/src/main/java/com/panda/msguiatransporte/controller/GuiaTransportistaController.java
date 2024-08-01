@@ -36,5 +36,9 @@ public class GuiaTransportistaController {
         Optional<GuiaTransptDTO> guiaTransptDTOList = guiaTransportistaIn.obtenerGuiaTransportistaIn(guiaNumero, guiaSerie);
         return ResponseEntity.ok(guiaTransptDTOList.get());
     }
+    @PutMapping("/referenciarFactura")
+    public ResponseEntity<GuiaTransptDTO> referenciarFactura(
+            @RequestParam(value = "guiaTransptSerieNumero", defaultValue = "1", required = true) long guiaTransptSerieNumero) {
 
+    }
 }
