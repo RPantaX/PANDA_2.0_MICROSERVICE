@@ -38,7 +38,9 @@ public class GuiaTransportistaController {
     }
     @PutMapping("/referenciarFactura")
     public ResponseEntity<GuiaTransptDTO> referenciarFactura(
-            @RequestParam(value = "guiaTransptSerieNumero", defaultValue = "1", required = true) long guiaTransptSerieNumero) {
-
+            @RequestParam(value = "guiaTransptSerieNumero",required = true) String guiaTransptSerieNumero,
+            @RequestParam(value = "facturaSerieNumero",required = true) String facturaSerieNumero) {
+        GuiaTransptDTO guiaTransptDTO = guiaTransportistaIn.referenciarFacturaAGuiaTransptIn(guiaTransptSerieNumero, facturaSerieNumero);
+        return new ResponseEntity<>(guiaTransptDTO, HttpStatus.OK);
     }
 }
