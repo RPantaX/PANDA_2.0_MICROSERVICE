@@ -35,9 +35,9 @@ public class DestinatarioEntity {
     @Column(name = "creado_en", nullable = false)
     private Timestamp creadoEn;
 
-    @Column(name = "modificado_en", nullable = false)
+    @Column(name = "modificado_en")
     private Timestamp modificadoEn;
 
-    @Column(name = "eliminado_en", nullable = false)
+    @Column(name = "eliminado_en")
     private Timestamp eliminadoEn;
 }

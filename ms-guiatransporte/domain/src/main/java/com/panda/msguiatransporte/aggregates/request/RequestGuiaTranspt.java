@@ -13,7 +13,7 @@ import java.sql.Timestamp;
 @Builder
 @Getter
 public class RequestGuiaTranspt {
-
+    private Long guiaTransptNumero;
     private Timestamp fechaInicioTraslado;
 
     private String registroMTC;

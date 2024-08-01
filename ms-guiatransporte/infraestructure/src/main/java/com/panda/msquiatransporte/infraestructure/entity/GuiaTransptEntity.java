@@ -17,15 +17,14 @@ import java.sql.Timestamp;
 @Builder
 public class GuiaTransptEntity {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "guia_transp_numero", nullable = false)
     private Long guiaTranspNumero;
 
     @Id
-    @Column(name = "guia_transp_serie", nullable = false, length = 15)
+    @Column(name = "guia_transp_serie", nullable = false, length = 4)
     private String guiaTranspSerie;
 
-    @Column(name = "guia_transp_serienumero", nullable = false, length = 4)
+    @Column(name = "guia_transp_serienumero", nullable = false, length = 15)
     private String guiaTranspSerienumero;
 
     @Column(name = "fecha_emision", nullable = false)
