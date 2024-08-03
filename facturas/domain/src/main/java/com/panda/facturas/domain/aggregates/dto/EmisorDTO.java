@@ -1,13 +1,13 @@
 package com.panda.facturas.domain.aggregates.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.sql.Timestamp;
 
 @AllArgsConstructor
 @NoArgsConstructor
+@Getter
+@Setter
 @Builder
 public class EmisorDTO {
     private String emisorRuc;

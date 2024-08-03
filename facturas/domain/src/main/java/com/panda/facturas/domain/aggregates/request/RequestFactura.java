@@ -10,9 +10,9 @@ import java.util.List;
 @Builder
 @Getter
 public class RequestFactura {
+    private Long facturaNumero;
     private String clienteRuc;
     private String observacion;
-    private Long facturaSerie;
     private BigDecimal descuentos;
     private BigDecimal anticipios;
     private BigDecimal isc;
@@ -20,6 +20,7 @@ public class RequestFactura {
     private BigDecimal otrosCargos;
     private BigDecimal otrosTributos;
     private String emisorRuc;
-    private int guiaTranspNumero;
+    private List<String> guiaTranspSerieNumero;
     private List<RequestFacturaDetalle> detallesFacturas;
+
 }

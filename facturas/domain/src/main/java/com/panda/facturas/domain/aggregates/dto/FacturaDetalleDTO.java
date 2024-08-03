@@ -1,18 +1,20 @@
 package com.panda.facturas.domain.aggregates.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.math.BigDecimal;
 
 @AllArgsConstructor
 @NoArgsConstructor
+@Getter
+@Setter
 @Builder
 public class FacturaDetalleDTO {
     private Long facturaNumero;
-    private String facturaSerienumero;
+
     private String facturaSerie;
+
+    private String facturaSerienumero;
 
     private Integer cantidad;
 

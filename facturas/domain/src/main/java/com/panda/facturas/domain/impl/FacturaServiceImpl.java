@@ -2,6 +2,7 @@ package com.panda.facturas.domain.impl;
 
 import com.panda.facturas.domain.aggregates.dto.FacturaDTO;
 import com.panda.facturas.domain.aggregates.request.RequestFactura;
+import com.panda.facturas.domain.aggregates.response.ResponseGuiaTransptByFactura;
 import com.panda.facturas.domain.ports.in.FacturaServiceIn;
 import com.panda.facturas.domain.ports.out.FacturaServiceOut;
 import lombok.RequiredArgsConstructor;
@@ -22,12 +23,12 @@ public class FacturaServiceImpl implements FacturaServiceIn {
     }
 
     @Override
-    public Optional<FacturaDTO> buscarFacturaPorfacturaSerienumeroIn(String facturaSerienumero) {
+    public Optional<ResponseGuiaTransptByFactura> buscarFacturaPorfacturaSerienumeroIn(String facturaSerienumero) {
         return facturaServiceOut.buscarFacturaPorfacturaSerienumeroOut(facturaSerienumero);
     }
 
     @Override
-    public List<FacturaDTO> obtenerFacturasIn() {
+    public List<ResponseGuiaTransptByFactura> obtenerFacturasIn() {
         return facturaServiceOut.obtenerFacturasOut();
     }
 }
