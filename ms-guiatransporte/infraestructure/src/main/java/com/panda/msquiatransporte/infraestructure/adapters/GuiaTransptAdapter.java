@@ -80,7 +80,7 @@ public class GuiaTransptAdapter implements GuiaTransportistaOut {
         return GuiaTransptEntity.builder()
                 .guiaTranspNumero(requestGuiaTranspt.getGuiaTransptNumero())
                 .guiaTranspSerie("EG03")
-                .guiaTranspSerienumero(requestGuiaTranspt.getGuiaTransptNumero()+"EG03")
+                .guiaTranspSerienumero("EG03"+requestGuiaTranspt.getGuiaTransptNumero())
                 .fechaEmision(Timestamp.valueOf(LocalDateTime.now()))
                 .fechaInicioTraslado(requestGuiaTranspt.getFechaInicioTraslado())
                 .registroMTC(requestGuiaTranspt.getRegistroMTC())
