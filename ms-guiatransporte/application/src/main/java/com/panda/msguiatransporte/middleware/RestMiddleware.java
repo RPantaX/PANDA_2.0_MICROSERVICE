@@ -31,5 +31,4 @@ public class RestMiddleware extends ResponseEntityExceptionHandler {
         ResponseError responseError = new ResponseError(new Date(), exception.getMessage(), webRequest.getDescription(false));
         return new ResponseEntity<>(responseError, HttpStatus.INTERNAL_SERVER_ERROR);
     }
-
 }
