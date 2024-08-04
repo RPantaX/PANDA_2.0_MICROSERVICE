@@ -9,7 +9,7 @@ import java.util.Optional;
 public interface EmisorServiceIn {
     EmisorDTO crearEmisorIn (RequestEmisor requestEmisor);
     Optional<EmisorDTO> buscarEmisorPorRucIn (String ruc);
-    List<EmisorDTO> buscarEmisoresPorRucIn (String ruc);
+    List<EmisorDTO> buscarEmisoresIn ();
     EmisorDTO actualizarEmisorIn (String ruc, RequestEmisor requestEmisor);
     EmisorDTO eliminarEmisorIn (String ruc);
 }

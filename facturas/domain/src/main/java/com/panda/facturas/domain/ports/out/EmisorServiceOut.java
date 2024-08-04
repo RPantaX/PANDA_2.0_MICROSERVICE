@@ -9,7 +9,7 @@ import java.util.Optional;
 public interface EmisorServiceOut {
     EmisorDTO crearEmisorOut (RequestEmisor requestEmisor);
     Optional<EmisorDTO> buscarEmisorPorRucOut (String ruc);
-    List<EmisorDTO> buscarEmisoresPorRucOut (String ruc);
+    List<EmisorDTO> buscarEmisoresOut ();
     EmisorDTO actualizarEmisorOut (String ruc, RequestEmisor requestEmisor);
     EmisorDTO eliminarEmisorOut (String ruc);
 }

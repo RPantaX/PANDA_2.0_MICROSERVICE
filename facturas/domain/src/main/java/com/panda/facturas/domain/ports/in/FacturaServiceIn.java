@@ -13,5 +13,5 @@ public interface FacturaServiceIn {
 
     Optional<ResponseGuiaTransptByFactura> buscarFacturaPorfacturaSerienumeroIn (String facturaSerienumero);
 
-    List<ResponseGuiaTransptByFactura> obtenerFacturasIn ();
+    List<FacturaDTO> obtenerFacturasIn ();
 }

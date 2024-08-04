@@ -36,9 +36,9 @@ public class EmisorEntity {
     @Column(name = "creado_en", nullable = false)
     private Timestamp creadoEn;
 
-    @Column(name = "modificado_en", nullable = false)
+    @Column(name = "modificado_en", nullable = true)
     private Timestamp modificadoEn;
 
-    @Column(name = "eliminado_en", nullable = false)
+    @Column(name = "eliminado_en", nullable = true)
     private Timestamp eliminadoEn;
 }

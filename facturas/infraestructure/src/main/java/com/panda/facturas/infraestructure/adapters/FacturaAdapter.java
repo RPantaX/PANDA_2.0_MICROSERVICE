@@ -12,6 +12,7 @@ import com.panda.facturas.domain.aggregates.response.ResponseSunat;
 import com.panda.facturas.domain.ports.out.FacturaServiceOut;
 import com.panda.facturas.infraestructure.entity.FacturaDetalleEntity;
 import com.panda.facturas.infraestructure.entity.FacturaEntity;
+import com.panda.facturas.infraestructure.mapper.FacturaDetalleMapper;
 import com.panda.facturas.infraestructure.mapper.FacturaMapper;
 import com.panda.facturas.infraestructure.repository.FacturaDetalleRepository;
 import com.panda.facturas.infraestructure.repository.FacturaRepository;
@@ -35,6 +36,7 @@ public class FacturaAdapter implements FacturaServiceOut {
     private final FacturaRepository facturaRepository;
     private final FacturaDetalleRepository facturaDetalleRepository;
     private final FacturaMapper facturaMapper;
+    private final FacturaDetalleMapper detalleMapper;
     private final ClienteSunat clienteSunat;
     private final ClientMSGuiaTranspt clientMSGuiaTranspt;
     @Value("${token.api}")
@@ -45,8 +47,6 @@ public class FacturaAdapter implements FacturaServiceOut {
     public FacturaDTO crearFacturaOut(RequestFactura requestFactura) {
         ResponseSunat responseSunat = getSunatInfo(requestFactura.getClienteRuc());
         validarCliente(responseSunat);
-
-
         BigDecimal subTotal = calcularSubtotal(requestFactura.getDetallesFacturas());
         BigDecimal total = calcularTotal(subTotal, requestFactura);
 
@@ -60,13 +60,39 @@ public class FacturaAdapter implements FacturaServiceOut {
 
     @Override
     public Optional<ResponseGuiaTransptByFactura> buscarFacturaPorfacturaSerienumeroOut(String facturaSerienumero) {
-        return Optional.empty();
+        Optional<FacturaEntity> facturaEntityOptional = facturaRepository.findByFacturaSerienumero(facturaSerienumero);
+        List<FacturaDetalleEntity> facturaDetalleEntity = facturaDetalleRepository.findByFacturaSerienumero(facturaSerienumero);
+        if (facturaEntityOptional.isEmpty()) {
+            throw new FacturaAppExceptionBadRequest("El factura no existe");
+        }
+        if (facturaDetalleEntity.isEmpty()) {
+            throw new FacturaAppExceptionBadRequest("El no existen items en la factura, error Grave!");
+        }
+        List<ResponseGuiaTranspt> guiasTranspts;
+        try {
+            guiasTranspts = clientMSGuiaTranspt.ListarGuiasPorFacturaSerieNumero(facturaSerienumero);
+            if (guiasTranspts == null) {
+                System.out.println("Guias no encontradas: " + guiasTranspts);
+            }
+        } catch (Exception e) {
+            System.out.println("Error al buscar las guias con facturaSerienumero: " + facturaSerienumero);
+            throw new FacturaAppExceptionBadRequest("Error al buscar las guias con serieNumero: " + facturaSerienumero);
+        }
+        ResponseGuiaTransptByFactura responseGuiaTransptByFactura = ResponseGuiaTransptByFactura.builder()
+                .facturaDTO(facturaMapper.mapFacturaToDto(facturaEntityOptional.get()))
+                .guiaTranspts(guiasTranspts)
+                .facturaDetalleDTOList(facturaDetalleEntity.stream().map(detalleMapper::mapFacturaDetalleToDto).toList())
+                .build();
+        return Optional.of(responseGuiaTransptByFactura);
     }
 
     @Override
-    public List<ResponseGuiaTransptByFactura> obtenerFacturasOut() {
-        return List.of();
+    public List<FacturaDTO> obtenerFacturasOut() {
+        List<FacturaEntity> facturaEntities = facturaRepository.findAll();
+        return facturaEntities.stream().map(facturaMapper::mapFacturaToDto).toList();
     }
+
+
     private ResponseSunat getSunatInfo(String clienteRuc) {
         String authorization = "Bearer " + tokenApi;
         return clienteSunat.getInfoSunat(clienteRuc, authorization);

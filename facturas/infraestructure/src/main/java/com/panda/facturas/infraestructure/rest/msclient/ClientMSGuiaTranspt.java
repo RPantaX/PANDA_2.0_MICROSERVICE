@@ -14,7 +14,7 @@ public interface ClientMSGuiaTranspt {
     @PutMapping("/referenciarFactura")
     ResponseGuiaTranspt referenciarFactura(@RequestParam(value = "guiaTransptSerieNumero",required = true) String guiaTransptSerieNumero,
                                                   @RequestParam(value = "facturaSerieNumero",required = true) String facturaSerieNumero);
-    @GetMapping("/search-by-course/{facturaSerieNumero}")
+    @GetMapping("/buscarPorFacturaSerieNumero/{facturaSerieNumero}")
     List<ResponseGuiaTranspt> ListarGuiasPorFacturaSerieNumero(@PathVariable("facturaSerieNumero") String facturaSerieNumero);
 
     @GetMapping("listarPorGuiaYSerie")

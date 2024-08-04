@@ -38,12 +38,12 @@ public class EmisorAdapter implements EmisorServiceOut {
 
     @Override
     public Optional<EmisorDTO> buscarEmisorPorRucOut(String ruc) {
-        if(emisorRepository.existsById(ruc)) throw new FacturaAppExceptionNotFound("El emisor con el ruc: " +ruc +" no existe");
+        if(!emisorRepository.existsById(ruc)) throw new FacturaAppExceptionNotFound("El emisor con el ruc: " +ruc +" no existe");
         return emisorRepository.findById(ruc).map(emisorMapper::mapEmisorToDTO);
     }
 
     @Override
-    public List<EmisorDTO> buscarEmisoresPorRucOut(String ruc) {
+    public List<EmisorDTO> buscarEmisoresOut() {
             List<EmisorEntity> emisorEntityList = emisorRepository.findAll();
         return emisorEntityList.stream().map(emisorMapper::mapEmisorToDTO).toList();
     }

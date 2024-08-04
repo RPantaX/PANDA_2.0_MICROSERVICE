@@ -26,8 +26,8 @@ public class EmisorServiceImpl implements EmisorServiceIn {
     }
 
     @Override
-    public List<EmisorDTO> buscarEmisoresPorRucIn(String ruc) {
-        return emisorServiceOut.buscarEmisoresPorRucOut(ruc);
+    public List<EmisorDTO> buscarEmisoresIn() {
+        return emisorServiceOut.buscarEmisoresOut();
     }
 
     @Override

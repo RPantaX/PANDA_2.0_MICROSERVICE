@@ -28,7 +28,7 @@ public class FacturaServiceImpl implements FacturaServiceIn {
     }
 
     @Override
-    public List<ResponseGuiaTransptByFactura> obtenerFacturasIn() {
+    public List<FacturaDTO> obtenerFacturasIn() {
         return facturaServiceOut.obtenerFacturasOut();
     }
 }
