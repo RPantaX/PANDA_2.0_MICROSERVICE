@@ -114,6 +114,8 @@ public class FacturaAdapter implements FacturaServiceOut {
         for (String guiaTransp : requestFactura.getGuiaTranspSerieNumero()) {
             String ultimosCuatroDigitos = guiaTransp.substring(guiaTransp.length() - 4);
             String primerosNumeros = guiaTransp.substring(0, guiaTransp.length() - 4);
+            System.out.println("ultimosCuatroDigitos"+ultimosCuatroDigitos);
+            System.out.println("primerosNumeros"+primerosNumeros);
             try {
                 ResponseGuiaTranspt responseGuiaTranspt = clientMSGuiaTranspt
                         .listarGuiaTransportistaPorGuiaYSerie(Integer.parseInt(primerosNumeros), ultimosCuatroDigitos);

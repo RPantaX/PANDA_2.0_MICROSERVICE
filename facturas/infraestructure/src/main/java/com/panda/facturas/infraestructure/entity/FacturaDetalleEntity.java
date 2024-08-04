@@ -8,7 +8,7 @@ import java.math.BigDecimal;
 
 @Entity
 @Table(name = "factura_detalle")
-@IdClass(FacturaEntity.class)
+@IdClass(FacturaDetalleId.class)
 @Setter
 @Getter
 @AllArgsConstructor

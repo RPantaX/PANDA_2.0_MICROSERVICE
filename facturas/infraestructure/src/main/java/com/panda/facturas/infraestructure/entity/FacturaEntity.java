@@ -1,5 +1,6 @@
 package com.panda.facturas.infraestructure.entity;
 
+import com.panda.facturas.infraestructure.entity.CompoundKeys.FacturaDetalleId;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -8,7 +9,7 @@ import java.sql.Timestamp;
 
 @Entity
 @Table(name = "factura")
-@IdClass(FacturaEntity.class)
+@IdClass(FacturaDetalleId.class)
 @Setter
 @Getter
 @AllArgsConstructor

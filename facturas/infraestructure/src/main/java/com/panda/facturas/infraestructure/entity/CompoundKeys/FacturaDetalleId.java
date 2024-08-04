@@ -11,5 +11,5 @@ import java.io.Serializable;
 @EqualsAndHashCode
 public class FacturaDetalleId implements Serializable {
     private Long facturaNumero;
-    private String serienumero;
+    private String facturaSerie;
 }

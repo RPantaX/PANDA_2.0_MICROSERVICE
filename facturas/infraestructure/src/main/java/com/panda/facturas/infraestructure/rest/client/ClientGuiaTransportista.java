@@ -9,10 +9,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.List;
 
-@FeignClient(name = "MS-GUIA-TRANSPORTISTA")
+//@FeignClient(name = "MS-GUIA-TRANSPORTISTA")
 public interface ClientGuiaTransportista {
-    @GetMapping("/ms-transportista/v1/guiatransportista/todos")
-    List<ResponseGuiaTransptByFactura> getGuiaTransportistas();
-    @PostMapping("/ms-transportista/v1/guiatransportista/{id}")
-    ResponseGuiaTransptByFactura addFacturaToGuiaTransp(@PathVariable Long id, @RequestBody String facturaId);
+//    @GetMapping("/ms-transportista/v1/guiatransportista/todos")
+//    List<ResponseGuiaTransptByFactura> getGuiaTransportistas();
+//
+//    @PostMapping("/ms-transportista/v1/guiatransportista/{id}")
+//    ResponseGuiaTransptByFactura addFacturaToGuiaTransp(@PathVariable Long id, @RequestBody String facturaId);
 }
