@@ -64,6 +64,12 @@ public class GuiaTransptAdapter implements GuiaTransportistaOut {
         return guiaTransptMapper.mapGuiaTransptToDTO(guiaTransptUpdated);
     }
 
+    @Override
+    public List<GuiaTransptDTO> ListarGuiasPorFacturaSerieNumeroOut(String facturaSerieNumero) {
+        List<GuiaTransptEntity> guias = guiaTransptRepository.findByFacturaSerienumero(facturaSerieNumero);
+        return guias.stream().map(guiaTransptMapper::mapGuiaTransptToDTO).toList();
+    }
+
     private void validarExistenciaEntidades(RequestGuiaTranspt requestGuiaTranspt) {
         if (!destinatarioRepository.existsById(requestGuiaTranspt.getDestRuc())) {
             throw new PandaAppExceptionNotFound("El destinatario con el ruc: " + requestGuiaTranspt.getDestRuc() + " no existe en la base de datos");

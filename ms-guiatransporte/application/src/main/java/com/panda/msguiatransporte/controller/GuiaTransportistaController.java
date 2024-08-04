@@ -3,6 +3,7 @@ package com.panda.msguiatransporte.controller;
 import com.panda.msguiatransporte.aggregates.dto.GuiaTransptDTO;
 import com.panda.msguiatransporte.aggregates.request.RequestGuiaTranspt;
 import com.panda.msguiatransporte.ports.in.GuiaTransportistaIn;
+import com.panda.msquiatransporte.infraestructure.entity.GuiaTransptEntity;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -42,5 +43,10 @@ public class GuiaTransportistaController {
             @RequestParam(value = "facturaSerieNumero",required = true) String facturaSerieNumero) {
         GuiaTransptDTO guiaTransptDTO = guiaTransportistaIn.referenciarFacturaAGuiaTransptIn(guiaTransptSerieNumero, facturaSerieNumero);
         return new ResponseEntity<>(guiaTransptDTO, HttpStatus.OK);
+    }
+    @GetMapping("/buscarPorFacturaSerieNumero/{facturaSerieNumero}")
+    public ResponseEntity <List<GuiaTransptDTO>> ListarGuiasPorFacturaSerieNumero(@PathVariable("facturaSerieNumero") String facturaSerieNumero){
+        List<GuiaTransptDTO> guiaTransptEntityList= guiaTransportistaIn.ListarGuiasPorFacturaSerieNumeroIn(facturaSerieNumero);
+        return new ResponseEntity<>(guiaTransptEntityList, HttpStatus.OK);
     }
 }
