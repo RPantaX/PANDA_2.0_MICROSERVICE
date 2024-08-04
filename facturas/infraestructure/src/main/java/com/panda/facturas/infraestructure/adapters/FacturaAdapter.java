@@ -26,6 +26,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -54,14 +55,29 @@ public class FacturaAdapter implements FacturaServiceOut {
 
         FacturaEntity factura = construirFactura(requestFactura, subTotal, total);
         FacturaEntity facturaSaved = facturaRepository.save(factura);
-        saveFacturaDetalles(requestFactura);
+        List<FacturaDetalleEntity> facturaDetalleEntityList = new ArrayList<>();
+        for(RequestFacturaDetalle requestFacturaDetalle : requestFactura.getDetallesFacturas()) {
+            FacturaDetalleEntity facturaDetalleEntity = FacturaDetalleEntity.builder()
+                    .facturaNumero(requestFactura.getFacturaNumero())
+                    .facturaSerie("E001")
+                    .facturaSerienumero("E001" + requestFactura.getFacturaNumero())
+                    .cantidad(requestFacturaDetalle.getCantidad())
+                    .unidadMedida(requestFacturaDetalle.getUnidadMedida())
+                    .descripcion(requestFacturaDetalle.getDescripcion())
+                    .valorUnitario(requestFacturaDetalle.getValorUnitario())
+                    .icbper(requestFacturaDetalle.getIcbper())
+                    .build();
+            facturaDetalleEntityList.add(facturaDetalleEntity);
+        }
+
+        facturaDetalleRepository.saveAll(facturaDetalleEntityList);
         return facturaMapper.mapFacturaToDto(facturaSaved);
     }
 
     @Override
     public Optional<ResponseGuiaTransptByFactura> buscarFacturaPorfacturaSerienumeroOut(String facturaSerienumero) {
         Optional<FacturaEntity> facturaEntityOptional = facturaRepository.findByFacturaSerienumero(facturaSerienumero);
-        List<FacturaDetalleEntity> facturaDetalleEntity = facturaDetalleRepository.findByFacturaSerienumero(facturaSerienumero);
+        List<FacturaDetalleEntity> facturaDetalleEntity = facturaDetalleRepository.findAllByFacturaSerienumero(facturaSerienumero);
         if (facturaEntityOptional.isEmpty()) {
             throw new FacturaAppExceptionBadRequest("El factura no existe");
         }
@@ -72,10 +88,9 @@ public class FacturaAdapter implements FacturaServiceOut {
         try {
             guiasTranspts = clientMSGuiaTranspt.ListarGuiasPorFacturaSerieNumero(facturaSerienumero);
             if (guiasTranspts == null) {
-                System.out.println("Guias no encontradas: " + guiasTranspts);
+                throw new FacturaAppExceptionBadRequest("Error al buscar las guias con serieNumero: " + facturaSerienumero);
             }
         } catch (Exception e) {
-            System.out.println("Error al buscar las guias con facturaSerienumero: " + facturaSerienumero);
             throw new FacturaAppExceptionBadRequest("Error al buscar las guias con serieNumero: " + facturaSerienumero);
         }
         ResponseGuiaTransptByFactura responseGuiaTransptByFactura = ResponseGuiaTransptByFactura.builder()
@@ -104,23 +119,6 @@ public class FacturaAdapter implements FacturaServiceOut {
         }
     }
 
-    private List<FacturaDetalleEntity> saveFacturaDetalles(RequestFactura requestFactura) {
-        List<FacturaDetalleEntity> facturaDetalles = requestFactura.getDetallesFacturas().stream()
-                .map(detalle -> FacturaDetalleEntity.builder()
-                        .facturaNumero(requestFactura.getFacturaNumero())
-                        .facturaSerie("E001")
-                        .facturaSerienumero("E001" + requestFactura.getFacturaNumero())
-                        .cantidad(detalle.getCantidad())
-                        .unidadMedida(detalle.getUnidadMedida())
-                        .descripcion(detalle.getDescripcion())
-                        .valorUnitario(detalle.getValorUnitario())
-                        .icbper(detalle.getIcbper())
-                        .build())
-                .collect(Collectors.toList());
-        facturaDetalleRepository.saveAll(facturaDetalles);
-        return facturaDetalles;
-    }
-
     private BigDecimal calcularSubtotal(List<RequestFacturaDetalle> itemsSave) {
         return itemsSave.stream()
                 .map(item -> BigDecimal.valueOf(item.getCantidad()).multiply(item.getValorUnitario()))
@@ -141,8 +139,6 @@ public class FacturaAdapter implements FacturaServiceOut {
         for (String guiaTransp : requestFactura.getGuiaTranspSerieNumero()) {
             String ultimosCuatroDigitos = guiaTransp.substring(guiaTransp.length() - 4);
             String primerosNumeros = guiaTransp.substring(0, guiaTransp.length() - 4);
-            System.out.println("ultimosCuatroDigitos"+ultimosCuatroDigitos);
-            System.out.println("primerosNumeros"+primerosNumeros);
             try {
                 ResponseGuiaTranspt responseGuiaTranspt = clientMSGuiaTranspt
                         .listarGuiaTransportistaPorGuiaYSerie(Integer.parseInt(primerosNumeros), ultimosCuatroDigitos);

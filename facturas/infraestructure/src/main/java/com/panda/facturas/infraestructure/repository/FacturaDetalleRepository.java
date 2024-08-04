@@ -11,5 +11,5 @@ import java.util.Optional;
 
 @Repository
 public interface FacturaDetalleRepository extends JpaRepository<FacturaDetalleEntity, FacturaDetalleId> {
-    List<FacturaDetalleEntity> findByFacturaSerienumero(String serienumero);
+    List<FacturaDetalleEntity> findAllByFacturaSerienumero(String serienumero);
 }

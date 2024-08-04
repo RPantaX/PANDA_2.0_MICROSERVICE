@@ -8,7 +8,6 @@ import java.math.BigDecimal;
 
 @Entity
 @Table(name = "factura_detalle")
-@IdClass(FacturaDetalleId.class)
 @Setter
 @Getter
 @AllArgsConstructor
@@ -16,9 +15,12 @@ import java.math.BigDecimal;
 @Builder
 public class FacturaDetalleEntity {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
     @Column(name = "factura_numero", nullable = false)
     private Long facturaNumero;
-    @Id
+
     @Column(name = "factura_serie", nullable = false, length = 4)
     private String facturaSerie;
 

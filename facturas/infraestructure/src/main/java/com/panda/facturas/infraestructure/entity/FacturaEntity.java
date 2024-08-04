@@ -19,7 +19,7 @@ public class FacturaEntity {
     @Id
     @Column(name = "factura_numero", nullable = false)
     private Long facturaNumero;
-
+    @Id
     @Column(name = "factura_serie", nullable = false, length = 4)
     private String facturaSerie;
 

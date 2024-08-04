@@ -9,7 +9,6 @@ import java.sql.Timestamp;
 
 @Entity
 @Table(name = "detraccion")
-@IdClass(DetraccionId.class)
 @Setter
 @Getter
 @AllArgsConstructor
@@ -17,10 +16,12 @@ import java.sql.Timestamp;
 @Builder
 public class DetraccionEntity {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
     @Column(name = "factura_numero", nullable = false)
     private Long facturaNumero;
 
-    @Id
     @Column(name = "factura_serie", nullable = false, length = 4)
     private String facturaSerie;
 
