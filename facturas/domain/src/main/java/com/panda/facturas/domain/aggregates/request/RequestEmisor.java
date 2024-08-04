@@ -1,12 +1,12 @@
 package com.panda.facturas.domain.aggregates.request;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
+@Getter
+@Setter
 public class RequestEmisor {
     private String emisorRuc;
 }
