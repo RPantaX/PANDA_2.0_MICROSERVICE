@@ -30,7 +30,7 @@ public class GuiaTransportistaController {
     }
 
     @GetMapping("/listarPorGuiaYSerie")
-    public ResponseEntity<GuiaTransptDTO> listarGuiaTransportista(
+    public ResponseEntity<GuiaTransptDTO> listarGuiaTransportistaPorGuiaYSerie(
             @RequestParam(value = "guiaNumero", defaultValue = "1", required = true) long guiaNumero,
             @RequestParam(value = "guiaSerie", defaultValue = "EG03", required = true) String guiaSerie) {
         Optional<GuiaTransptDTO> guiaTransptDTOList = guiaTransportistaIn.obtenerGuiaTransportistaIn(guiaNumero, guiaSerie);
