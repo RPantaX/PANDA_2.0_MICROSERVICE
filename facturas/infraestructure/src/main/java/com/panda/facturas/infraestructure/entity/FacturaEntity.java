@@ -8,6 +8,7 @@ import java.sql.Timestamp;
 
 @Entity
 @Table(name = "factura")
+@IdClass(FacturaEntity.class)
 @Setter
 @Getter
 @AllArgsConstructor
@@ -34,25 +35,25 @@ public class FacturaEntity {
     @Column(name = "igv", nullable = false, precision = 15, scale = 2)
     private BigDecimal igv;
 
-    @Column(name = "descuentos", nullable = false, precision = 15, scale = 2)
+    @Column(name = "descuentos", nullable = true, precision = 15, scale = 2)
     private BigDecimal descuentos;
 
-    @Column(name = "anticipios", nullable = false, precision = 15, scale = 2)
+    @Column(name = "anticipios", nullable = true, precision = 15, scale = 2)
     private BigDecimal anticipios;
 
     @Column(name = "valor_venta", nullable = false, precision = 15, scale = 2)
     private BigDecimal valorVenta;
 
-    @Column(name = "isc", nullable = false, precision = 15, scale = 2)
+    @Column(name = "isc", nullable = true, precision = 15, scale = 2)
     private BigDecimal isc;
 
-    @Column(name = "icbper", nullable = false, precision = 15, scale = 2)
+    @Column(name = "icbper", nullable = true, precision = 15, scale = 2)
     private BigDecimal icbper;
 
-    @Column(name = "otros_cargos", nullable = false, precision = 15, scale = 2)
+    @Column(name = "otros_cargos", nullable = true, precision = 15, scale = 2)
     private BigDecimal otrosCargos;
 
-    @Column(name = "otros_tributos", nullable = false, precision = 15, scale = 2)
+    @Column(name = "otros_tributos", nullable = true, precision = 15, scale = 2)
     private BigDecimal otrosTributos;
 
     @Column(name = "monto_redondeo", nullable = false, precision = 15, scale = 2)

@@ -1,14 +1,14 @@
 package com.panda.facturas.domain.aggregates.request;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.math.BigDecimal;
 
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
+@Getter
+@Setter
 public class RequestFacturaDetalle {
     private Integer cantidad;
     private String unidadMedida;

@@ -21,12 +21,11 @@ public class DetraccionEntity {
     private Long facturaNumero;
 
     @Id
-    @Column(name = "factura_serienumero", nullable = false, length = 15)
-    private String serienumero;
-
     @Column(name = "factura_serie", nullable = false, length = 4)
     private String facturaSerie;
 
+    @Column(name = "factura_serienumero", nullable = false, length = 15)
+    private String serienumero;
     @Column(name = "leyenda", nullable = false, length = 255)
     private String leyenda;
 
