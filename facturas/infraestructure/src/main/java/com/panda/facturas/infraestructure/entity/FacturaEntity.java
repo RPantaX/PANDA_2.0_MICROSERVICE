@@ -17,7 +17,6 @@ import java.sql.Timestamp;
 @Builder
 public class FacturaEntity {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "factura_numero", nullable = false)
     private Long facturaNumero;
 

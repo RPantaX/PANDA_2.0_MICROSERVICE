@@ -4,6 +4,7 @@ import com.panda.facturas.domain.aggregates.constants.Constants;
 import com.panda.facturas.domain.aggregates.dto.FacturaDTO;
 import com.panda.facturas.domain.aggregates.exceptions.FacturaAppExceptionBadRequest;
 import com.panda.facturas.domain.aggregates.request.RequestFactura;
+import com.panda.facturas.domain.aggregates.request.RequestFacturaDetalle;
 import com.panda.facturas.domain.aggregates.response.ResponseError;
 import com.panda.facturas.domain.aggregates.response.ResponseGuiaTranspt;
 import com.panda.facturas.domain.aggregates.response.ResponseGuiaTransptByFactura;
@@ -45,15 +46,15 @@ public class FacturaAdapter implements FacturaServiceOut {
         ResponseSunat responseSunat = getSunatInfo(requestFactura.getClienteRuc());
         validarCliente(responseSunat);
 
-        List<FacturaDetalleEntity> facturaDetalles = saveFacturaDetalles(requestFactura);
-        BigDecimal subTotal = calcularSubtotal(facturaDetalles);
+
+        BigDecimal subTotal = calcularSubtotal(requestFactura.getDetallesFacturas());
         BigDecimal total = calcularTotal(subTotal, requestFactura);
 
         validarGuiasTransp(requestFactura);
 
         FacturaEntity factura = construirFactura(requestFactura, subTotal, total);
         FacturaEntity facturaSaved = facturaRepository.save(factura);
-
+        saveFacturaDetalles(requestFactura);
         return facturaMapper.mapFacturaToDto(facturaSaved);
     }
 
@@ -94,7 +95,7 @@ public class FacturaAdapter implements FacturaServiceOut {
         return facturaDetalles;
     }
 
-    private BigDecimal calcularSubtotal(List<FacturaDetalleEntity> itemsSave) {
+    private BigDecimal calcularSubtotal(List<RequestFacturaDetalle> itemsSave) {
         return itemsSave.stream()
                 .map(item -> BigDecimal.valueOf(item.getCantidad()).multiply(item.getValorUnitario()))
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
