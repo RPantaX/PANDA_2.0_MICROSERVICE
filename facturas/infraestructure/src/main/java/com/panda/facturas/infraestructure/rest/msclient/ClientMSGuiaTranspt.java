@@ -9,15 +9,15 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 
-@FeignClient(name = "MS-GUIA-TRANSPORTISTA", url = "http://localhost:8080/v1/ms-guia-transportista/guiaTransportista/")
+@FeignClient(name = "MS-GUIAS-TRANSPORTISTA")
 public interface ClientMSGuiaTranspt {
-    @PutMapping("/referenciarFactura")
+    @PutMapping("/v1/ms-guia-transportista/guiaTransportista/referenciarFactura")
     ResponseGuiaTranspt referenciarFactura(@RequestParam(value = "guiaTransptSerieNumero",required = true) String guiaTransptSerieNumero,
                                                   @RequestParam(value = "facturaSerieNumero",required = true) String facturaSerieNumero);
-    @GetMapping("/buscarPorFacturaSerieNumero/{facturaSerieNumero}")
+    @GetMapping("/v1/ms-guia-transportista/guiaTransportista/buscarPorFacturaSerieNumero/{facturaSerieNumero}")
     List<ResponseGuiaTranspt> ListarGuiasPorFacturaSerieNumero(@PathVariable("facturaSerieNumero") String facturaSerieNumero);
 
-    @GetMapping("listarPorGuiaYSerie")
+    @GetMapping("/v1/ms-guia-transportista/guiaTransportista/listarPorGuiaYSerie")
     ResponseGuiaTranspt listarGuiaTransportistaPorGuiaYSerie(@RequestParam(value = "guiaNumero", defaultValue = "1", required = true) long guiaNumero,
                                                              @RequestParam(value = "guiaSerie", defaultValue = "EG03", required = true) String guiaSerie);
 }

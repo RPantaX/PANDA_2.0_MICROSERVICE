@@ -82,7 +82,7 @@ public class FacturaAdapter implements FacturaServiceOut {
             throw new FacturaAppExceptionBadRequest("El factura no existe");
         }
         if (facturaDetalleEntity.isEmpty()) {
-            throw new FacturaAppExceptionBadRequest("El no existen items en la factura, error Grave!");
+            throw new FacturaAppExceptionBadRequest("No existen items en la factura, error Grave!");
         }
         List<ResponseGuiaTranspt> guiasTranspts;
         try {
