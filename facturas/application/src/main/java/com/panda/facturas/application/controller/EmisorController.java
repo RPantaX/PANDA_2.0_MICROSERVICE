@@ -3,6 +3,7 @@ package com.panda.facturas.application.controller;
 import com.panda.facturas.domain.aggregates.dto.EmisorDTO;
 import com.panda.facturas.domain.aggregates.request.RequestEmisor;
 import com.panda.facturas.domain.ports.in.EmisorServiceIn;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,7 +18,7 @@ import java.util.Optional;
 public class EmisorController {
     private final EmisorServiceIn emisorServiceIn;
     @PostMapping("/crear")
-    public ResponseEntity<EmisorDTO> registrarEmisor(@RequestBody RequestEmisor requestEmisor) {
+    public ResponseEntity<EmisorDTO> registrarEmisor(@RequestBody @Valid RequestEmisor requestEmisor) {
         EmisorDTO emisorDTO = emisorServiceIn.crearEmisorIn(requestEmisor);
         return new ResponseEntity<>(emisorDTO, HttpStatus.CREATED);
     }
