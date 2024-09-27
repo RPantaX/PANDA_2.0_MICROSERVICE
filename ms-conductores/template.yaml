@@ -1,0 +1,347 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  ms-conductores
+
+  Sample SAM Template for ms-conductores
+
+# More info about Globals: https://github.com/awslabs/serverless-application-model/blob/master/docs/globals.rst
+Globals:
+  Function:
+
+    Timeout: 20
+    MemorySize: 512
+    Runtime: java17
+    Architectures:
+      - x86_64
+    # You can add LoggingConfig parameters such as the Logformat, Log Group, and SystemLogLevel or ApplicationLogLevel. Learn more here https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/sam-resource-function.html#sam-function-loggingconfig.
+    LoggingConfig:
+      LogFormat: JSON
+    Environment:
+      Variables:
+        TABLE_NAME: conductores
+        INDEX_DNI_NAME: GSI1-DNI
+        INDEX_CAMION_PLACA_NAME: GSI2-CamionPlaca
+        INDEX_CARRETA_PLACA_NAME: GSI3-CarretaPlaca
+        
+        
+Resources:
+  MyApi:
+    Type: AWS::Serverless::Api
+    Properties:
+      StageName: Prod
+      Models:
+        CreateCamionRequestModel:
+          title: Create Camion Model
+          type: object
+          properties:
+            camionPlaca:
+              type: string
+            camionMarca:
+              type: string
+            camionModelo:
+              type: string
+            camionAnioFabricacion:
+              type: string
+            camionCertHabVehicular:
+              type: boolean
+            camionSOAT:
+              type: string
+            camionRevTecnica:
+              type: boolean
+            camionFechMantenimiento:
+              type: string
+            carretaPlaca:
+              type: string
+            carretaCapacidad:
+              type: double
+            carretaCargaUtil:
+              type: double
+            carretaConfVehicular:
+              type: string
+            
+          required:
+            - camionPlaca
+            - camionMarca
+            - camionModelo
+            - camionAnioFabricacion
+            - camionCertHabVehicular
+            - camionSOAT
+            - camionRevTecnica
+            - camionFechMantenimiento
+            - carretaPlaca
+            - carretaCapacidad
+            - carretaCargaUtil
+            - carretaConfVehicular
+        CreateCamionResponseModel:
+          title: Create Camion Model
+          type: object
+          properties:
+            id:
+              type: string
+            camionPlaca:
+              type: string
+            camionMarca:
+              type: string
+            camionModelo:
+              type: string
+            camionAnioFabricacion:
+              type: string
+            camionCertHabVehicular:
+              type: boolean
+            camionSOAT:
+              type: string
+            camionRevTecnica:
+              type: boolean
+            camionFechMantenimiento:
+              type: string
+            carretaPlaca:
+              type: string
+            carretaCapacidad:
+              type: double
+            carretaCargaUtil:
+              type: double
+            carretaConfVehicular:
+              type: string
+        GetConductorResponseModel:
+          title: Get Conductor Response
+          type: object
+          properties:
+            conductores:
+              type: array
+              items:
+                type: object
+                properties:
+                  id:
+                    type: string
+                  camionFechMantenimiento:
+                    type: string
+                  camionPlaca:
+                    type: string
+                  DNI:
+                    type: string
+                  nombres:
+                    type: string
+                  apellidos:
+                    type: string
+                  nroLicencia:
+                    type: string
+                  idUser:
+                    type: integer
+                  certPsicofisico:
+                    type: boolean
+                  certMecanicaBasica:
+                    type: boolean
+                  certPrimerosAux:
+                    type: boolean
+                  certSeguridadVial:
+                    type: boolean
+                  certBuquesPortuaria:
+                    type: boolean
+                  camionMarca:
+                    type: string
+                  camionModelo:
+                    type: string
+                  camionAnioFabricacion:
+                    type: string
+                  camionCertHabVehicular:
+                    type: boolean
+                  camionSOAT:
+                    type: string
+                  camionRevTecnica:
+                    type: boolean
+                  carretaPlaca:
+                    type: string
+                  carretaCapacidad:
+                    type: number
+                  carretaCargaUtil:
+                    type: number
+                  carretaConfVehicular:
+                    type: string
+            message:
+              type: string
+  CreateCamionHandlerFunction:
+    Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+    Properties:
+      CodeUri: HelloWorldFunction
+      Handler: aws.lambda.camion.CreateCamionHandler::handleRequest
+      Events:
+        CreateCamion:
+          Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
+          Properties:
+            Path: /camion
+            Method: post
+            RestApiId:
+              Ref: MyApi
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: conductores
+  
+  GetConductorByCarretaPlacaHandlerFunction:
+    Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+    Properties:
+      CodeUri: HelloWorldFunction
+      Handler: aws.lambda.conductor.GetConductorByCarretaPlacaHandler::handleRequest
+      Events:
+        CreateCamion:
+          Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
+          Properties:
+            Path: /conductor/carreta
+            Method: get
+            RestApiId:
+              Ref: MyApi
+            RequestParameters:
+              - method.request.querystring.carretaPlaca:
+                  Required: true
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: conductores
+  GetConductorByCamionPlacaHandlerFunction:
+    Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+    Properties:
+      CodeUri: HelloWorldFunction
+      Handler: aws.lambda.conductor.GetConductorByCamionPlacaHandler::handleRequest
+      Events:
+        CreateCamion:
+          Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
+          Properties:
+            Path: /conductor/camion
+            Method: get
+            RestApiId:
+              Ref: MyApi
+            RequestParameters:
+              - method.request.querystring.camionPlaca:
+                  Required: true
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: conductores
+  
+  GetConductorByDNIHandlerFunction:
+    Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+    Properties:
+      CodeUri: HelloWorldFunction
+      Handler: aws.lambda.conductor.GetConductorByDNIHandler::handleRequest
+      Events:
+        CreateCamion:
+          Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
+          Properties:
+            Path: /conductor
+            Method: get
+            RestApiId:
+              Ref: MyApi
+            RequestParameters:
+              - method.request.querystring.dni:
+                  Required: true
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: conductores
+  CreateConductorIntoCamionHandlerFunction:
+    Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+    Properties:
+      CodeUri: HelloWorldFunction
+      Handler: aws.lambda.conductor.CreateConductorIntoCamionHandler::handleRequest
+      Events:
+        CreateCamion:
+          Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
+          Properties:
+            Path: /conductor
+            Method: put
+            RestApiId:
+              Ref: MyApi
+            RequestParameters:
+              - method.request.querystring.id:
+                  Required: true
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: conductores
+  ListConductoresPaginatedHandlerFunction:
+    Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+    Properties:
+      CodeUri: HelloWorldFunction
+      Handler: aws.lambda.conductor.ListConductoresPaginatedHandler::handleRequest
+      Events:
+        CreateCamion:
+          Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
+          Properties:
+            Path: /conductor
+            Method: get
+            RestApiId:
+              Ref: MyApi
+            RequestParameters:
+              - method.request.querystring.pageSize:
+                  Required: true
+              - method.request.querystring.lastEvaluatedKey:
+                  Required: true
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: conductores
+  DynamoDBTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: conductores
+      AttributeDefinitions:
+        - AttributeName: id
+          AttributeType: S
+        - AttributeName: DNI
+          AttributeType: S
+        - AttributeName: camionPlaca
+          AttributeType: S
+        - AttributeName: carretaPlaca
+          AttributeType: S
+      KeySchema:
+        - AttributeName: id
+          KeyType: HASH  # Partition key
+      ProvisionedThroughput:
+        ReadCapacityUnits: 1
+        WriteCapacityUnits: 1
+      GlobalSecondaryIndexes:
+        - IndexName: GSI1-DNI
+          KeySchema:
+            - AttributeName: DNI
+              KeyType: HASH
+          Projection:
+            ProjectionType: ALL
+          ProvisionedThroughput:
+            ReadCapacityUnits: 1
+            WriteCapacityUnits: 1
+        - IndexName: GSI2-CamionPlaca
+          KeySchema:
+            - AttributeName: camionPlaca
+              KeyType: HASH
+          Projection:
+            ProjectionType: ALL
+          ProvisionedThroughput:
+            ReadCapacityUnits: 1
+            WriteCapacityUnits: 1
+        - IndexName: GSI3-CarretaPlaca
+          KeySchema:
+            - AttributeName: carretaPlaca
+              KeyType: HASH
+          Projection:
+            ProjectionType: ALL
+          ProvisionedThroughput:
+            ReadCapacityUnits: 1
+            WriteCapacityUnits: 1
+  ApplicationResourceGroup:
+    Type: AWS::ResourceGroups::Group
+    Properties:
+      Name:
+        Fn::Sub: ApplicationInsights-SAM-${AWS::StackName}
+      ResourceQuery:
+        Type: CLOUDFORMATION_STACK_1_0
+  ApplicationInsightsMonitoring:
+    Type: AWS::ApplicationInsights::Application
+    Properties:
+      ResourceGroupName:
+        Ref: ApplicationResourceGroup
+      AutoConfigurationEnabled: 'true'
+Outputs:
+  createCamionApi:
+    Description: API Gateway endpoint URL for Prod stage for CreateCamion function
+    Value: !Sub "https://${MyApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/camion/"
+  CreateCamionHandlerFunction:
+    Description: Create Camion Lambda Function ARN
+    Value: !GetAtt CreateCamionHandlerFunction.Arn
+  CreateCamionHandlerFunctionIamRole:
+    Description: Implicit IAM Role created for Create Camion function
+    Value: !GetAtt CreateCamionHandlerFunctionRole.Arn
