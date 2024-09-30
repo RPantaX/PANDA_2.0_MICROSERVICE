@@ -3,6 +3,7 @@ package com.panda.facturas.domain.impl;
 import com.panda.facturas.domain.aggregates.dto.FacturaDTO;
 import com.panda.facturas.domain.aggregates.request.RequestFactura;
 import com.panda.facturas.domain.aggregates.response.ResponseGuiaTransptByFactura;
+import com.panda.facturas.domain.aggregates.response.ResponseListPaginableFactura;
 import com.panda.facturas.domain.ports.in.FacturaServiceIn;
 import com.panda.facturas.domain.ports.out.FacturaServiceOut;
 import lombok.RequiredArgsConstructor;
@@ -30,5 +31,10 @@ public class FacturaServiceImpl implements FacturaServiceIn {
     @Override
     public List<FacturaDTO> obtenerFacturasIn() {
         return facturaServiceOut.obtenerFacturasOut();
+    }
+
+    @Override
+    public ResponseListPaginableFactura obtenerFacturasPaginableIn(int numeroDePagina, int medidaDePagina, String ordenarPor, String sortDir) {
+        return facturaServiceOut.obtenerFacturasPaginableOut(numeroDePagina, medidaDePagina, ordenarPor, sortDir);
     }
 }

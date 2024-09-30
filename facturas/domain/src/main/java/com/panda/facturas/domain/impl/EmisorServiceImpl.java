@@ -2,6 +2,7 @@ package com.panda.facturas.domain.impl;
 
 import com.panda.facturas.domain.aggregates.dto.EmisorDTO;
 import com.panda.facturas.domain.aggregates.request.RequestEmisor;
+import com.panda.facturas.domain.aggregates.response.ResponseListPaginableEmisor;
 import com.panda.facturas.domain.ports.in.EmisorServiceIn;
 import com.panda.facturas.domain.ports.out.EmisorServiceOut;
 import lombok.RequiredArgsConstructor;
@@ -38,5 +39,10 @@ public class EmisorServiceImpl implements EmisorServiceIn {
     @Override
     public EmisorDTO eliminarEmisorIn(String ruc) {
         return emisorServiceOut.eliminarEmisorOut(ruc);
+    }
+
+    @Override
+    public ResponseListPaginableEmisor listarPaginableEmisoresIn(int numeroDePagina, int medidaDePagina, String ordenarPor, String sortDir) {
+        return emisorServiceOut.listarPaginableEmisoresOut(numeroDePagina,medidaDePagina,ordenarPor,sortDir);
     }
 }

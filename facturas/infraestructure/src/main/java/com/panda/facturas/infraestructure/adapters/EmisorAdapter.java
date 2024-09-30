@@ -4,6 +4,7 @@ import com.panda.facturas.domain.aggregates.dto.EmisorDTO;
 import com.panda.facturas.domain.aggregates.exceptions.FacturaAppExceptionBadRequest;
 import com.panda.facturas.domain.aggregates.exceptions.FacturaAppExceptionNotFound;
 import com.panda.facturas.domain.aggregates.request.RequestEmisor;
+import com.panda.facturas.domain.aggregates.response.ResponseListPaginableEmisor;
 import com.panda.facturas.domain.aggregates.response.ResponseSunat;
 import com.panda.facturas.domain.ports.out.EmisorServiceOut;
 import com.panda.facturas.infraestructure.entity.EmisorEntity;
@@ -12,11 +13,17 @@ import com.panda.facturas.infraestructure.repository.EmisorRepository;
 import com.panda.facturas.infraestructure.rest.client.ClienteSunat;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -66,6 +73,25 @@ public class EmisorAdapter implements EmisorServiceOut {
         EmisorEntity emisorEntity=emisorRepository.save(emisorEntityOptional.get());
         return emisorMapper.mapEmisorToDTO(emisorEntity);
     }
+
+    @Override
+    public ResponseListPaginableEmisor listarPaginableEmisoresOut(int numeroDePagina, int medidaDePagina, String ordenarPor, String sortDir) {
+        Sort sort = sortDir.equalsIgnoreCase(Sort.Direction.ASC.name()) ? Sort.by(ordenarPor).ascending() : Sort.by(ordenarPor).descending();
+        Pageable pageable = PageRequest.of(numeroDePagina, medidaDePagina, sort);
+        Page<EmisorEntity> emisorEntityPage = emisorRepository.findAll(pageable);
+
+        List<EmisorEntity> emisorEntityList = emisorEntityPage.getContent();
+        List <EmisorDTO> emisorDTOList = emisorEntityList.stream().map(emisorMapper::mapEmisorToDTO).toList();
+
+        return ResponseListPaginableEmisor.builder()
+                .emisorDTOList(emisorDTOList)
+                .numeroPagina(emisorEntityPage.getNumber())
+                .medidaPagina(emisorEntityPage.getSize())
+                .totalElementos(emisorEntityPage.getTotalElements())
+                .ultima(emisorEntityPage.isLast())
+                .build();
+    }
+
     private EmisorEntity getEntityUpdate(ResponseSunat sunat, EmisorEntity emisor){
         emisor.setEmisorRazonSocial(sunat.getRazonSocial());
         emisor.setEmisorDireccion(sunat.getDireccion());
