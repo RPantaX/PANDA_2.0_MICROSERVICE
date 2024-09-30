@@ -5,10 +5,7 @@ import com.panda.facturas.domain.aggregates.dto.FacturaDTO;
 import com.panda.facturas.domain.aggregates.exceptions.FacturaAppExceptionBadRequest;
 import com.panda.facturas.domain.aggregates.request.RequestFactura;
 import com.panda.facturas.domain.aggregates.request.RequestFacturaDetalle;
-import com.panda.facturas.domain.aggregates.response.ResponseError;
-import com.panda.facturas.domain.aggregates.response.ResponseGuiaTranspt;
-import com.panda.facturas.domain.aggregates.response.ResponseGuiaTransptByFactura;
-import com.panda.facturas.domain.aggregates.response.ResponseSunat;
+import com.panda.facturas.domain.aggregates.response.*;
 import com.panda.facturas.domain.ports.out.FacturaServiceOut;
 import com.panda.facturas.infraestructure.entity.FacturaDetalleEntity;
 import com.panda.facturas.infraestructure.entity.FacturaEntity;
@@ -20,6 +17,10 @@ import com.panda.facturas.infraestructure.rest.client.ClienteSunat;
 import com.panda.facturas.infraestructure.rest.msclient.ClientMSGuiaTranspt;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -105,6 +106,24 @@ public class FacturaAdapter implements FacturaServiceOut {
     public List<FacturaDTO> obtenerFacturasOut() {
         List<FacturaEntity> facturaEntities = facturaRepository.findAll();
         return facturaEntities.stream().map(facturaMapper::mapFacturaToDto).toList();
+    }
+
+    @Override
+    public ResponseListPaginableFactura obtenerFacturasPaginableOut(int numeroDePagina, int medidaDePagina, String ordenarPor, String sortDir) {
+        Sort sort = sortDir.equalsIgnoreCase(Sort.Direction.ASC.name()) ? Sort.by(ordenarPor).ascending() : Sort.by(ordenarPor).descending();
+        Pageable pageable = PageRequest.of(numeroDePagina, medidaDePagina, sort);
+        Page<FacturaEntity> facturaEntityPage = facturaRepository.findAll(pageable);
+
+        List<FacturaEntity> emisorEntityList = facturaEntityPage.getContent();
+        List <FacturaDTO> facturaDTOList = emisorEntityList.stream().map(facturaMapper::mapFacturaToDto).toList();
+
+        return ResponseListPaginableFactura.builder()
+                .facturaDetallesList(facturaDTOList)
+                .numeroPagina(facturaEntityPage.getNumber())
+                .medidaPagina(facturaEntityPage.getSize())
+                .totalElementos(facturaEntityPage.getTotalElements())
+                .ultima(facturaEntityPage.isLast())
+                .build();
     }
 
 

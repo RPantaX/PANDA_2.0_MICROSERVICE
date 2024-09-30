@@ -56,7 +56,9 @@ public class CreateCamionHandler implements RequestHandler<Map<String, String>, 
                     .withString("carretaPlaca", conductorTable.getCarretaPlaca())
                     .withDouble("carretaCapacidad", conductorTable.getCarretaCapacidad())
                     .withDouble("carretaCargaUtil", conductorTable.getCarretaCargaUtil())
-                    .withString("carretaConfVehicular", conductorTable.getCarretaConfVehicular());
+                    .withString("carretaConfVehicular", conductorTable.getCarretaConfVehicular())
+                    .withBoolean("estado", conductorTable.getEstado())
+                    .withString("creadoEn", conductorTable.getCreadoEn());
 
             // Insert the item into DynamoDB
             PutItemOutcome outcome = table.putItem(item);
