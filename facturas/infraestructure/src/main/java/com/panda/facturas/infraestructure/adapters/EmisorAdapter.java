@@ -42,7 +42,6 @@ public class EmisorAdapter implements EmisorServiceOut {
         EmisorEntity emisorEntity = crearRemitenteEntity(requestEmisor, responseSunat);
         return emisorMapper.mapEmisorToDTO(emisorRepository.save(emisorEntity));
     }
-
     @Override
     public Optional<EmisorDTO> buscarEmisorPorRucOut(String ruc) {
         if(!emisorRepository.existsById(ruc)) throw new FacturaAppExceptionNotFound("El emisor con el ruc: " +ruc +" no existe");

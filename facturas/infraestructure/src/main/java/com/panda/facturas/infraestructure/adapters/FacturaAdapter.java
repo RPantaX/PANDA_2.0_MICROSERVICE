@@ -3,14 +3,17 @@ package com.panda.facturas.infraestructure.adapters;
 import com.panda.facturas.domain.aggregates.constants.Constants;
 import com.panda.facturas.domain.aggregates.dto.FacturaDTO;
 import com.panda.facturas.domain.aggregates.exceptions.FacturaAppExceptionBadRequest;
+import com.panda.facturas.domain.aggregates.exceptions.FacturaAppExceptionNotFound;
 import com.panda.facturas.domain.aggregates.request.RequestFactura;
 import com.panda.facturas.domain.aggregates.request.RequestFacturaDetalle;
 import com.panda.facturas.domain.aggregates.response.*;
 import com.panda.facturas.domain.ports.out.FacturaServiceOut;
+import com.panda.facturas.infraestructure.entity.EmisorEntity;
 import com.panda.facturas.infraestructure.entity.FacturaDetalleEntity;
 import com.panda.facturas.infraestructure.entity.FacturaEntity;
 import com.panda.facturas.infraestructure.mapper.FacturaDetalleMapper;
 import com.panda.facturas.infraestructure.mapper.FacturaMapper;
+import com.panda.facturas.infraestructure.repository.EmisorRepository;
 import com.panda.facturas.infraestructure.repository.FacturaDetalleRepository;
 import com.panda.facturas.infraestructure.repository.FacturaRepository;
 import com.panda.facturas.infraestructure.rest.client.ClienteSunat;
@@ -29,6 +32,7 @@ import java.sql.Timestamp;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -41,6 +45,7 @@ public class FacturaAdapter implements FacturaServiceOut {
     private final FacturaDetalleMapper detalleMapper;
     private final ClienteSunat clienteSunat;
     private final ClientMSGuiaTranspt clientMSGuiaTranspt;
+    private final EmisorRepository emisorRepository;
     @Value("${token.api}")
     private String tokenApi;
 
@@ -49,6 +54,7 @@ public class FacturaAdapter implements FacturaServiceOut {
     public FacturaDTO crearFacturaOut(RequestFactura requestFactura) {
         ResponseSunat responseSunat = getSunatInfo(requestFactura.getClienteRuc());
         validarCliente(responseSunat);
+        validarEmisor(requestFactura);
         BigDecimal subTotal = calcularSubtotal(requestFactura.getDetallesFacturas());
         BigDecimal total = calcularTotal(subTotal, requestFactura);
 
@@ -74,13 +80,19 @@ public class FacturaAdapter implements FacturaServiceOut {
         facturaDetalleRepository.saveAll(facturaDetalleEntityList);
         return facturaMapper.mapFacturaToDto(facturaSaved);
     }
+    private void validarEmisor(RequestFactura requestFactura) {
+        Optional<EmisorEntity> emisorEntity = emisorRepository.findById(requestFactura.getClienteRuc());
+        if(emisorEntity.isEmpty()) {
+            throw new FacturaAppExceptionNotFound("Emisor no encontrado");
+        }
+    }
 
     @Override
     public Optional<ResponseGuiaTransptByFactura> buscarFacturaPorfacturaSerienumeroOut(String facturaSerienumero) {
         Optional<FacturaEntity> facturaEntityOptional = facturaRepository.findByFacturaSerienumero(facturaSerienumero);
         List<FacturaDetalleEntity> facturaDetalleEntity = facturaDetalleRepository.findAllByFacturaSerienumero(facturaSerienumero);
         if (facturaEntityOptional.isEmpty()) {
-            throw new FacturaAppExceptionBadRequest("El factura no existe");
+            throw new FacturaAppExceptionNotFound("El factura no existe");
         }
         if (facturaDetalleEntity.isEmpty()) {
             throw new FacturaAppExceptionBadRequest("No existen items en la factura, error Grave!");
