@@ -1,15 +1,15 @@
 package com.panda.facturas.domain.aggregates.response;
 
 import com.panda.facturas.domain.aggregates.dto.EmisorDTO;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.List;
 
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@Getter
+@Setter
 public class ResponseListPaginableEmisor {
     List<EmisorDTO> emisorDTOList;
     private int numeroPagina;

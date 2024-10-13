@@ -1,8 +1,10 @@
 package com.panda.msguiatransporte.controller;
 
 
+import com.panda.msguiatransporte.aggregates.constants.Constants;
 import com.panda.msguiatransporte.aggregates.dto.RemitenteDTO;
 import com.panda.msguiatransporte.aggregates.request.RequestRemitente;
+import com.panda.msguiatransporte.aggregates.response.ResponseListPaginableRemitente;
 import com.panda.msguiatransporte.ports.in.RemitenteServiceIn;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -40,5 +42,14 @@ public class RemitenteController {
     public ResponseEntity<RemitenteDTO> eliminarRemitente(@PathVariable("ruc") String ruc) {
         RemitenteDTO remitenteDTO = remitenteService.eliminarRemitenteIn(ruc);
         return new ResponseEntity<>(remitenteDTO, HttpStatus.NO_CONTENT);
+    }
+    @GetMapping("/listar/paginable")
+    public ResponseEntity<ResponseListPaginableRemitente> listarPaginableRemitente(@RequestParam(value = "pageNo", defaultValue = Constants.NUMERO_PAG_POR_DEFECTO, required = false) int numeroDePagina,
+                                                                                @RequestParam(value = "pageSize", defaultValue = Constants.MEDIDA_PAG_POR_DEFECTO, required = false) int medidaDePagina,
+                                                                                @RequestParam(value = "sortBy", defaultValue = Constants.ORDENAR_POR_DEFECTO_REMITENTE, required = false) String ordenarPor,
+                                                                                @RequestParam(value = "sortDir", defaultValue = Constants.ORDENAR_DIRECC_POR_DEFECTO, required = false) String sortDir) {
+        ResponseListPaginableRemitente responseListPaginableRemitente= remitenteService.listarRemitentePaginableIn(
+                numeroDePagina, medidaDePagina, ordenarPor, sortDir);
+        return ResponseEntity.ok(responseListPaginableRemitente);
     }
 }

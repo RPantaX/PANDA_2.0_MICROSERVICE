@@ -2,6 +2,7 @@ package com.panda.msguiatransporte.impl;
 
 import com.panda.msguiatransporte.aggregates.dto.PagadorFleteDTO;
 import com.panda.msguiatransporte.aggregates.request.RequestPagadorFlete;
+import com.panda.msguiatransporte.aggregates.response.ResponseListPaginablePagador;
 import com.panda.msguiatransporte.ports.in.PagadorFleteServiceIn;
 import com.panda.msguiatransporte.ports.out.PagadorFleteServiceOut;
 import lombok.RequiredArgsConstructor;
@@ -37,5 +38,10 @@ public class PagadorFleteServiceImpl implements PagadorFleteServiceIn {
     @Override
     public PagadorFleteDTO eliminarPagadorIn(String ruc) {
         return pagadorFleteServiceOut.eliminarPagadorOut(ruc);
+    }
+
+    @Override
+    public ResponseListPaginablePagador listaPaginablePagadoresIn(int numeroDePagina, int medidaDePagina, String ordenarPor, String sortDir) {
+        return pagadorFleteServiceOut.listaPaginablePagadoresOut(numeroDePagina, medidaDePagina, ordenarPor, sortDir);
     }
 }

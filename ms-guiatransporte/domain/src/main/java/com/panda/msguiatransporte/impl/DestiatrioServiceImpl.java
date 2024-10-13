@@ -2,6 +2,7 @@ package com.panda.msguiatransporte.impl;
 
 import com.panda.msguiatransporte.aggregates.dto.DestinatarioDTO;
 import com.panda.msguiatransporte.aggregates.request.RequestDestinatario;
+import com.panda.msguiatransporte.aggregates.response.ResponseListPaginableDestinatario;
 import com.panda.msguiatransporte.ports.in.DestinatarioServiceIn;
 import com.panda.msguiatransporte.ports.out.DestinatarioServiceOut;
 import lombok.RequiredArgsConstructor;
@@ -36,5 +37,10 @@ public class DestiatrioServiceImpl implements DestinatarioServiceIn {
     @Override
     public DestinatarioDTO eliminarDestinatarioIn(String ruc) {
         return destinatarioServiceOut.eliminarDestinatarioOut(ruc);
+    }
+
+    @Override
+    public ResponseListPaginableDestinatario listarDestinatariosPaginableIn(int numeroDePagina, int medidaDePagina, String ordenarPor, String sortDir) {
+       return destinatarioServiceOut.listarDestinatariosPaginableOut(numeroDePagina, medidaDePagina, ordenarPor, sortDir);
     }
 }

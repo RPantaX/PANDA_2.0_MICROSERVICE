@@ -1,7 +1,9 @@
 package com.panda.msguiatransporte.controller;
 
+import com.panda.msguiatransporte.aggregates.constants.Constants;
 import com.panda.msguiatransporte.aggregates.dto.GuiaTransptDTO;
 import com.panda.msguiatransporte.aggregates.request.RequestGuiaTranspt;
+import com.panda.msguiatransporte.aggregates.response.ResponseListPaginableGuiaTranspt;
 import com.panda.msguiatransporte.ports.in.GuiaTransportistaIn;
 import com.panda.msquiatransporte.infraestructure.entity.GuiaTransptEntity;
 import lombok.RequiredArgsConstructor;
@@ -48,5 +50,14 @@ public class GuiaTransportistaController {
     public ResponseEntity <List<GuiaTransptDTO>> ListarGuiasPorFacturaSerieNumero(@PathVariable("facturaSerieNumero") String facturaSerieNumero){
         List<GuiaTransptDTO> guiaTransptEntityList= guiaTransportistaIn.ListarGuiasPorFacturaSerieNumeroIn(facturaSerieNumero);
         return new ResponseEntity<>(guiaTransptEntityList, HttpStatus.OK);
+    }
+    @GetMapping("/listar/paginable")
+    public ResponseEntity<ResponseListPaginableGuiaTranspt> listarPaginableGuiaTranspt(@RequestParam(value = "pageNo", defaultValue = Constants.NUMERO_PAG_POR_DEFECTO, required = false) int numeroDePagina,
+                                                                                  @RequestParam(value = "pageSize", defaultValue = Constants.MEDIDA_PAG_POR_DEFECTO, required = false) int medidaDePagina,
+                                                                                  @RequestParam(value = "sortBy", defaultValue = Constants.ORDENAR_POR_DEFECTO_GUIATRANSPORTISTA, required = false) String ordenarPor,
+                                                                                  @RequestParam(value = "sortDir", defaultValue = Constants.ORDENAR_DIRECC_POR_DEFECTO, required = false) String sortDir) {
+        ResponseListPaginableGuiaTranspt responseListPaginableGuiaTranspt= guiaTransportistaIn.listarGuiasPorFacturaSerieNumeroIn(
+                numeroDePagina, medidaDePagina, ordenarPor, sortDir);
+        return ResponseEntity.ok(responseListPaginableGuiaTranspt);
     }
 }

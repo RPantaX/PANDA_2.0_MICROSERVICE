@@ -2,6 +2,8 @@ package com.panda.msguiatransporte.impl;
 
 import com.panda.msguiatransporte.aggregates.dto.GuiaTransptDTO;
 import com.panda.msguiatransporte.aggregates.request.RequestGuiaTranspt;
+import com.panda.msguiatransporte.aggregates.response.ResponseListPaginableDestinatario;
+import com.panda.msguiatransporte.aggregates.response.ResponseListPaginableGuiaTranspt;
 import com.panda.msguiatransporte.ports.in.GuiaTransportistaIn;
 import com.panda.msguiatransporte.ports.out.GuiaTransportistaOut;
 import lombok.RequiredArgsConstructor;
@@ -39,4 +41,10 @@ public class GuiaTransportistaServiceImpl implements GuiaTransportistaIn {
     public List<GuiaTransptDTO> ListarGuiasPorFacturaSerieNumeroIn(String facturaSerieNumero) {
         return guiaTransportistaOut.ListarGuiasPorFacturaSerieNumeroOut(facturaSerieNumero);
     }
+
+    @Override
+    public ResponseListPaginableGuiaTranspt listarGuiasPorFacturaSerieNumeroIn(int numeroDePagina, int medidaDePagina, String ordenarPor, String sortDir) {
+        return guiaTransportistaOut.listarGuiasPorFacturaSerieNumeroOut(numeroDePagina,medidaDePagina,ordenarPor,sortDir);
+    }
+
 }

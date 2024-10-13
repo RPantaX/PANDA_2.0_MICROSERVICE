@@ -3,6 +3,7 @@ package com.panda.msquiatransporte.infraestructure.adapters;
 import com.panda.msguiatransporte.aggregates.dto.PagadorFleteDTO;
 import com.panda.msguiatransporte.aggregates.exception.PandaExceptionBadRequest;
 import com.panda.msguiatransporte.aggregates.request.RequestPagadorFlete;
+import com.panda.msguiatransporte.aggregates.response.ResponseListPaginablePagador;
 import com.panda.msguiatransporte.aggregates.response.ResponseSunat;
 import com.panda.msguiatransporte.ports.out.PagadorFleteServiceOut;
 import com.panda.msquiatransporte.infraestructure.entity.PagadorFleteEntity;
@@ -11,6 +12,10 @@ import com.panda.msquiatransporte.infraestructure.repository.PagadorFleteReposit
 import com.panda.msquiatransporte.infraestructure.rest.client.ClienteSunat;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
@@ -64,6 +69,23 @@ public class PagadorAdapter implements PagadorFleteServiceOut {
         pagadorFleteEntityOptional.get().setEliminadoEn(getTimestamp());
         PagadorFleteEntity pagadorFleteEntity=pagadorFleteRepository.save(pagadorFleteEntityOptional.get());
         return pagadorFleteMapper.mapPagadorFleteToDTO(pagadorFleteEntity);
+    }
+
+    @Override
+    public ResponseListPaginablePagador listaPaginablePagadoresOut(int numeroDePagina, int medidaDePagina, String ordenarPor, String sortDir) {
+        Sort sort = sortDir.equalsIgnoreCase(Sort.Direction.ASC.name()) ? Sort.by(ordenarPor).ascending() : Sort.by(ordenarPor).descending();
+        Pageable pageable = PageRequest.of(numeroDePagina, medidaDePagina, sort);
+        Page<PagadorFleteEntity> pagadorFleteEntityPage = pagadorFleteRepository.findAll(pageable);
+
+        List<PagadorFleteEntity> pagadorFleteEntities = pagadorFleteEntityPage.getContent();
+        List <PagadorFleteDTO> pagadorFleteDTOS = pagadorFleteEntities.stream().map(pagadorFleteMapper::mapPagadorFleteToDTO).toList();
+        return ResponseListPaginablePagador.builder()
+                .list(pagadorFleteDTOS)
+                .numeroPagina(pagadorFleteEntityPage.getNumber())
+                .medidaPagina(pagadorFleteEntityPage.getSize())
+                .totalElementos(pagadorFleteEntityPage.getTotalElements())
+                .ultima(pagadorFleteEntityPage.isLast())
+                .build();
     }
 
     private PagadorFleteEntity getEntityUpdate(ResponseSunat sunat, PagadorFleteEntity pagadorFleteEntity, RequestPagadorFlete requestPagadorFlete){

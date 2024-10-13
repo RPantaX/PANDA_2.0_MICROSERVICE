@@ -7,7 +7,6 @@ import com.panda.facturas.domain.aggregates.response.ResponseListPaginableEmisor
 import com.panda.facturas.domain.ports.in.EmisorServiceIn;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -33,7 +32,7 @@ public class EmisorController {
     @GetMapping("/listar/paginable")
     public ResponseEntity<ResponseListPaginableEmisor> listarPaginableEmisor(@RequestParam(value = "pageNo", defaultValue = Constants.NUMERO_PAG_POR_DEFECTO, required = false) int numeroDePagina,
                                                                  @RequestParam(value = "pageSize", defaultValue = Constants.MEDIDA_PAG_POR_DEFECTO, required = false) int medidaDePagina,
-                                                                 @RequestParam(value = "sortBy", defaultValue = Constants.ORDENAR_POR_DEFECTO, required = false) String ordenarPor,
+                                                                 @RequestParam(value = "sortBy", defaultValue = Constants.ORDENAR_POR_DEFECTO_EMISOR, required = false) String ordenarPor,
                                                                  @RequestParam(value = "sortDir", defaultValue = Constants.ORDENAR_DIRECC_POR_DEFECTO, required = false) String sortDir) {
         ResponseListPaginableEmisor responseListPaginableEmisor= emisorServiceIn.listarPaginableEmisoresIn(
                 numeroDePagina, medidaDePagina, ordenarPor, sortDir);
