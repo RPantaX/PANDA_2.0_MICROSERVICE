@@ -3,6 +3,7 @@ package com.panda.msquiatransporte.infraestructure.adapters;
 import com.panda.msguiatransporte.aggregates.dto.DestinatarioDTO;
 import com.panda.msguiatransporte.aggregates.exception.PandaExceptionBadRequest;
 import com.panda.msguiatransporte.aggregates.request.RequestDestinatario;
+import com.panda.msguiatransporte.aggregates.response.ResponseListPaginableDestinatario;
 import com.panda.msguiatransporte.aggregates.response.ResponseSunat;
 import com.panda.msguiatransporte.ports.out.DestinatarioServiceOut;
 import com.panda.msquiatransporte.infraestructure.entity.DestinatarioEntity;
@@ -11,6 +12,10 @@ import com.panda.msquiatransporte.infraestructure.repository.DestinatarioReposit
 import com.panda.msquiatransporte.infraestructure.rest.client.ClienteSunat;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
@@ -70,6 +75,23 @@ public class DestinatarioApdapter implements DestinatarioServiceOut {
         DestinatarioEntity destinatarioEntity=destinatarioRepository.save(destinatarioEntityOptional.get());
         return destinatarioMapper.mapDestinatarioToDTO(destinatarioEntity);
     }
+
+    @Override
+    public ResponseListPaginableDestinatario listarDestinatariosPaginableOut(int numeroDePagina, int medidaDePagina, String ordenarPor, String sortDir) {
+        Sort sort = sortDir.equalsIgnoreCase(Sort.Direction.ASC.name()) ? Sort.by(ordenarPor).ascending() : Sort.by(ordenarPor).descending();
+        Pageable pageable = PageRequest.of(numeroDePagina, medidaDePagina, sort);
+        Page<DestinatarioEntity> page = destinatarioRepository.findAll(pageable);
+        List <DestinatarioEntity> destinatarioEntityList = page.getContent();
+        List<DestinatarioDTO> destinatarioDTOList = destinatarioEntityList.stream().map(destinatarioMapper::mapDestinatarioToDTO).toList();
+        return ResponseListPaginableDestinatario.builder()
+                .destinatarioDTOList(destinatarioDTOList)
+                .numeroPagina(page.getNumber())
+                .medidaPagina(page.getSize())
+                .totalElementos(page.getTotalElements())
+                .ultima(page.isLast())
+                .build();
+    }
+
     private DestinatarioEntity getEntityUpdate(ResponseSunat sunat, DestinatarioEntity destinatarioEntity){
         destinatarioEntity.setDestRazonSocial(sunat.getRazonSocial());
         destinatarioEntity.setDestDireccion(sunat.getDireccion());

@@ -2,9 +2,7 @@ package com.panda.facturas.domain.aggregates.response;
 
 import com.panda.facturas.domain.aggregates.dto.FacturaDTO;
 import com.panda.facturas.domain.aggregates.dto.FacturaDetalleDTO;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.List;
 
@@ -12,6 +10,8 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
+@Getter
+@Setter
 public class ResponseListPaginableFactura {
     private List<FacturaDTO> facturaDetallesList;
     private int numeroPagina;

@@ -3,6 +3,7 @@ package com.panda.msquiatransporte.infraestructure.adapters;
 import com.panda.msguiatransporte.aggregates.dto.GuiaTransptDTO;
 import com.panda.msguiatransporte.aggregates.exception.PandaAppExceptionNotFound;
 import com.panda.msguiatransporte.aggregates.request.RequestGuiaTranspt;
+import com.panda.msguiatransporte.aggregates.response.ResponseListPaginableGuiaTranspt;
 import com.panda.msguiatransporte.ports.out.GuiaTransportistaOut;
 import com.panda.msquiatransporte.infraestructure.entity.GuiaTransptEntity;
 import com.panda.msquiatransporte.infraestructure.entity.compoundKeys.GuiaTransptId;
@@ -12,6 +13,10 @@ import com.panda.msquiatransporte.infraestructure.repository.GuiaTransptReposito
 import com.panda.msquiatransporte.infraestructure.repository.PagadorFleteRepository;
 import com.panda.msquiatransporte.infraestructure.repository.RemitenteRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
@@ -68,6 +73,22 @@ public class GuiaTransptAdapter implements GuiaTransportistaOut {
     public List<GuiaTransptDTO> ListarGuiasPorFacturaSerieNumeroOut(String facturaSerieNumero) {
         List<GuiaTransptEntity> guias = guiaTransptRepository.findByFacturaSerienumero(facturaSerieNumero);
         return guias.stream().map(guiaTransptMapper::mapGuiaTransptToDTO).toList();
+    }
+
+    @Override
+    public ResponseListPaginableGuiaTranspt listarGuiasPorFacturaSerieNumeroOut(int numeroDePagina, int medidaDePagina, String ordenarPor, String sortDir) {
+        Sort sort = sortDir.equalsIgnoreCase(Sort.Direction.ASC.name()) ? Sort.by(ordenarPor).ascending() : Sort.by(ordenarPor).descending();
+        Pageable pageable = PageRequest.of(numeroDePagina, medidaDePagina, sort);
+        Page<GuiaTransptEntity> guiaTransptEntitiesPage = guiaTransptRepository.findAll(pageable);
+        List<GuiaTransptEntity> guiaTransptEntities = guiaTransptEntitiesPage.getContent();
+        List<GuiaTransptDTO> guiaTransptDTOPage = guiaTransptEntities.stream().map(guiaTransptMapper::mapGuiaTransptToDTO).toList();
+        return ResponseListPaginableGuiaTranspt.builder()
+                .list(guiaTransptDTOPage)
+                .numeroPagina(guiaTransptEntitiesPage.getNumber())
+                .medidaPagina(guiaTransptEntitiesPage.getSize())
+                .totalElementos(guiaTransptEntitiesPage.getTotalElements())
+                .ultima(guiaTransptEntitiesPage.isLast())
+                .build();
     }
 
     private void validarExistenciaEntidades(RequestGuiaTranspt requestGuiaTranspt) {

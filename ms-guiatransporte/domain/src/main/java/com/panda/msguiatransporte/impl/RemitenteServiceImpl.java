@@ -3,6 +3,7 @@ package com.panda.msguiatransporte.impl;
 import com.panda.msguiatransporte.aggregates.dto.RemitenteDTO;
 import com.panda.msguiatransporte.aggregates.request.RequestDestinatario;
 import com.panda.msguiatransporte.aggregates.request.RequestRemitente;
+import com.panda.msguiatransporte.aggregates.response.ResponseListPaginableRemitente;
 import com.panda.msguiatransporte.ports.in.RemitenteServiceIn;
 import com.panda.msguiatransporte.ports.out.RemitenteServiceOut;
 import lombok.RequiredArgsConstructor;
@@ -38,5 +39,10 @@ public class RemitenteServiceImpl implements RemitenteServiceIn {
     @Override
     public RemitenteDTO eliminarRemitenteIn(String ruc) {
         return remitenteServiceOut.eliminarRemitenteOut(ruc);
+    }
+
+    @Override
+    public ResponseListPaginableRemitente listarRemitentePaginableIn(int numeroDePagina, int medidaDePagina, String ordenarPor, String sortDir) {
+        return remitenteServiceOut.listarRemitentePaginableOut(numeroDePagina, medidaDePagina, ordenarPor, sortDir);
     }
 }

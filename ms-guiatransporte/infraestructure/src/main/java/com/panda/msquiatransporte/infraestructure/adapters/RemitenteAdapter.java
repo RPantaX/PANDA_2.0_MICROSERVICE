@@ -3,6 +3,7 @@ package com.panda.msquiatransporte.infraestructure.adapters;
 import com.panda.msguiatransporte.aggregates.dto.RemitenteDTO;
 import com.panda.msguiatransporte.aggregates.exception.PandaExceptionBadRequest;
 import com.panda.msguiatransporte.aggregates.request.RequestRemitente;
+import com.panda.msguiatransporte.aggregates.response.ResponseListPaginableRemitente;
 import com.panda.msguiatransporte.aggregates.response.ResponseSunat;
 import com.panda.msguiatransporte.ports.out.RemitenteServiceOut;
 import com.panda.msquiatransporte.infraestructure.entity.RemitenteEntity;
@@ -11,6 +12,10 @@ import com.panda.msquiatransporte.infraestructure.repository.RemitenteRepository
 import com.panda.msquiatransporte.infraestructure.rest.client.ClienteSunat;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
@@ -64,6 +69,23 @@ public class RemitenteAdapter implements RemitenteServiceOut {
         remitenteEntityOptional.get().setEliminadoEn(getTimestamp());
         RemitenteEntity remitenteEntity=remitenteRepository.save(remitenteEntityOptional.get());
         return remitenteMapper.mapRemitenteToDTO(remitenteEntity);
+    }
+
+    @Override
+    public ResponseListPaginableRemitente listarRemitentePaginableOut(int numeroDePagina, int medidaDePagina, String ordenarPor, String sortDir) {
+        Sort sort = sortDir.equalsIgnoreCase(Sort.Direction.ASC.name()) ? Sort.by(ordenarPor).ascending() : Sort.by(ordenarPor).descending();
+        Pageable pageable = PageRequest.of(numeroDePagina, medidaDePagina, sort);
+        Page<RemitenteEntity> remitenteEntities = remitenteRepository.findAll(pageable);
+
+        List<RemitenteEntity> remitenteEntityList = remitenteEntities.getContent();
+        List <RemitenteDTO> remitenteDTOS = remitenteEntityList.stream().map(remitenteMapper::mapRemitenteToDTO).toList();
+        return ResponseListPaginableRemitente.builder()
+                .list(remitenteDTOS)
+                .numeroPagina(remitenteEntities.getNumber())
+                .medidaPagina(remitenteEntities.getSize())
+                .totalElementos(remitenteEntities.getTotalElements())
+                .ultima(remitenteEntities.isLast())
+                .build();
     }
 
     private RemitenteEntity getEntityUpdate(ResponseSunat sunat, RemitenteEntity remitenteEntity){

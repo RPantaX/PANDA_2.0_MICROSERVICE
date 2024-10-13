@@ -1,7 +1,9 @@
 package com.panda.msguiatransporte.controller;
 
+import com.panda.msguiatransporte.aggregates.constants.Constants;
 import com.panda.msguiatransporte.aggregates.dto.PagadorFleteDTO;
 import com.panda.msguiatransporte.aggregates.request.RequestPagadorFlete;
+import com.panda.msguiatransporte.aggregates.response.ResponseListPaginablePagador;
 import com.panda.msguiatransporte.ports.in.PagadorFleteServiceIn;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -40,5 +42,14 @@ public class PagadorFleteController {
     public ResponseEntity<PagadorFleteDTO> eliminarPagadorFlete(@PathVariable("ruc") String ruc) {
         PagadorFleteDTO pagadorFleteDTO = pagadorFleteServiceIn.eliminarPagadorIn(ruc);
         return new ResponseEntity<>(pagadorFleteDTO, HttpStatus.NO_CONTENT);
+    }
+    @GetMapping("/listar/paginable")
+    public ResponseEntity<ResponseListPaginablePagador> listarPaginablePagador(@RequestParam(value = "pageNo", defaultValue = Constants.NUMERO_PAG_POR_DEFECTO, required = false) int numeroDePagina,
+                                                                              @RequestParam(value = "pageSize", defaultValue = Constants.MEDIDA_PAG_POR_DEFECTO, required = false) int medidaDePagina,
+                                                                              @RequestParam(value = "sortBy", defaultValue = Constants.ORDENAR_POR_DEFECTO_PAGADOR_FLETE, required = false) String ordenarPor,
+                                                                              @RequestParam(value = "sortDir", defaultValue = Constants.ORDENAR_DIRECC_POR_DEFECTO, required = false) String sortDir) {
+        ResponseListPaginablePagador responseListPaginablePagador= pagadorFleteServiceIn.listaPaginablePagadoresIn(
+                numeroDePagina, medidaDePagina, ordenarPor, sortDir);
+        return ResponseEntity.ok(responseListPaginablePagador);
     }
 }

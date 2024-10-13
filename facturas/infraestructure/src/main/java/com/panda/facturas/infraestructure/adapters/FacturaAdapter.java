@@ -32,9 +32,7 @@ import java.sql.Timestamp;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -126,8 +124,8 @@ public class FacturaAdapter implements FacturaServiceOut {
         Pageable pageable = PageRequest.of(numeroDePagina, medidaDePagina, sort);
         Page<FacturaEntity> facturaEntityPage = facturaRepository.findAll(pageable);
 
-        List<FacturaEntity> emisorEntityList = facturaEntityPage.getContent();
-        List <FacturaDTO> facturaDTOList = emisorEntityList.stream().map(facturaMapper::mapFacturaToDto).toList();
+        List<FacturaEntity> facturaEntities = facturaEntityPage.getContent();
+        List <FacturaDTO> facturaDTOList = facturaEntities.stream().map(facturaMapper::mapFacturaToDto).toList();
 
         return ResponseListPaginableFactura.builder()
                 .facturaDetallesList(facturaDTOList)
