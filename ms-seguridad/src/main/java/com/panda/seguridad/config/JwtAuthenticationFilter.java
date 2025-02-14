@@ -50,7 +50,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         if (Objects.nonNull(username) && SecurityContextHolder.getContext().getAuthentication() == null) {
             UserDetails userDetails = usuarioService.userDetailsService().loadUserByUsername(username);
             try {
-                if (jwtService.validateToken(jwt, userDetails)) {
+                if (jwtService.validateToken(jwt)) {
                     //la persona si existe y el token si es válido, entonces has lo siquiente...
                     SecurityContext securityContext = SecurityContextHolder.createEmptyContext();
                     //a la autenticacion le ponemos el userDetails y los roles

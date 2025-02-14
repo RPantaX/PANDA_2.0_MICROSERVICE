@@ -17,8 +17,8 @@ public class EmisorServiceImpl implements EmisorServiceIn {
     private final EmisorServiceOut emisorServiceOut;
 
     @Override
-    public EmisorDTO crearEmisorIn(RequestEmisor requestEmisor) {
-        return emisorServiceOut.crearEmisorOut(requestEmisor);
+    public void crearEmisorIn(RequestEmisor requestEmisor) {
+        emisorServiceOut.crearEmisorOut(requestEmisor);
     }
 
     @Override

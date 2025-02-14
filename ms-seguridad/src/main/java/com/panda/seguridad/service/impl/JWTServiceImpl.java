@@ -1,11 +1,15 @@
 package com.panda.seguridad.service.impl;
 
+import com.panda.seguridad.entity.Usuario;
+import com.panda.seguridad.repository.UsuarioRepository;
 import com.panda.seguridad.service.JWTService;
+import com.panda.seguridad.service.UsuarioService;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -22,10 +26,11 @@ import java.util.Date;
 import java.util.function.Function;
 
 @Service
+@RequiredArgsConstructor
 public class JWTServiceImpl implements JWTService {
     @Value("classpath:jwtKeys/private_key.pem")
     private Resource privateKeyFile;
-
+    private final UsuarioService usuarioService;
     //metodos de apoyo
     @Override
     public String generateToken(UserDetails userDetails) throws IOException, NoSuchAlgorithmException, InvalidKeySpecException {
@@ -35,6 +40,20 @@ public class JWTServiceImpl implements JWTService {
                 .setExpiration(new Date(System.currentTimeMillis() + 120000))
                 .signWith(getSignKey(), SignatureAlgorithm.HS256)
                 .compact();
+    }
+
+    @Override
+    public boolean validateToken(String token) throws IOException, NoSuchAlgorithmException, InvalidKeySpecException {
+        final String username = extractUserName(token);
+        UserDetails userDB = usuarioService.userDetailsService().loadUserByUsername(username);
+        return (username.equals(userDB.getUsername()) && !isTokenExpired(token));
+    }
+    @Override
+    public boolean validateTokenForMicroservices(String token) throws IOException, NoSuchAlgorithmException, InvalidKeySpecException {
+        String tokenWithoutBearer = token.substring(7);
+        final String username = extractUserName(tokenWithoutBearer);
+        UserDetails userDB = usuarioService.userDetailsService().loadUserByUsername(username);
+        return (username.equals(userDB.getUsername()) && !isTokenExpired(tokenWithoutBearer));
     }
     @Override
     public String extractUserName(String token) throws IOException, NoSuchAlgorithmException, InvalidKeySpecException {
@@ -57,11 +76,6 @@ public class JWTServiceImpl implements JWTService {
         byte[] keyBytes = loadPrivateKey(privateKeyFile);
         //byte[] keyBytes = Decoders.BASE64.decode("o91N7lhvq4Kq6sDzPB/qMeFq3/q92dVw0tOOGJHnF4U=");
         return Keys.hmacShaKeyFor(keyBytes);
-    }
-    @Override
-    public boolean validateToken(String token, UserDetails userDetails) throws IOException, NoSuchAlgorithmException, InvalidKeySpecException {
-        final String username = extractUserName(token);
-        return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
     }
     private boolean isTokenExpired(String token) throws IOException, NoSuchAlgorithmException, InvalidKeySpecException {
         return extractClaims(token, Claims::getExpiration).before(new Date());

@@ -1,0 +1,36 @@
+spring:
+  jpa:
+    hibernate:
+      ddl-auto: update
+
+    show-sql: true
+    database-platform: org.hibernate.dialect.MySQL8Dialect
+    properties:
+      hibernate.format_sql: true
+  application:
+    name: security-service
+  data:
+    jpa:
+      repositories:
+        enabled: true
+  datasource:
+    url: jdbc:mysql://localhost:3307/db_reservation?useSSL=false
+    username: fazt
+    password: 123456
+server:
+  port: 0
+eureka:
+  instance:
+    instance-id: ${spring.application.name}:${random.uuid}
+logging:
+  level:
+    root: debug
+
+springdoc:
+  api-docs:
+    enabled: true
+    path: /v1/security-service/v3/api-docs
+  swagger-ui:
+    csrf:
+      enabled: true
+    path: /v1/security-service/swagger-ui.html

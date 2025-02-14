@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface EmisorServiceIn {
-    EmisorDTO crearEmisorIn (RequestEmisor requestEmisor);
+    void crearEmisorIn (RequestEmisor requestEmisor);
     Optional<EmisorDTO> buscarEmisorPorRucIn (String ruc);
     List<EmisorDTO> buscarEmisoresIn ();
     EmisorDTO actualizarEmisorIn (String ruc, RequestEmisor requestEmisor);

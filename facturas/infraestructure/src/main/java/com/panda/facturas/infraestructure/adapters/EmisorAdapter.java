@@ -12,11 +12,13 @@ import com.panda.facturas.infraestructure.mapper.EmisorMapper;
 import com.panda.facturas.infraestructure.repository.EmisorRepository;
 import com.panda.facturas.infraestructure.rest.client.ClienteSunat;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
@@ -27,6 +29,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class EmisorAdapter implements EmisorServiceOut {
     private final EmisorRepository emisorRepository;
     private final ClienteSunat clienteSunat;
@@ -34,13 +37,26 @@ public class EmisorAdapter implements EmisorServiceOut {
     @Value("${token.api}")
     String tokenApi;
 
+    @Async("EmisotTaskExecutor")
     @Override
-    public EmisorDTO crearEmisorOut(RequestEmisor requestEmisor) {
+    public void crearEmisorOut(RequestEmisor requestEmisor) {
+        EmisorEntity emisorEntity = EmisorEntity.builder().build();
         if(emisorRepository.existsById(requestEmisor.getEmisorRuc()))
             throw new FacturaAppExceptionBadRequest("El emisor con el ruc:"+ requestEmisor.getEmisorRuc() +"ya existe en la base de datos");
-        ResponseSunat responseSunat = getExecutionSunat(requestEmisor.getEmisorRuc());
-        EmisorEntity emisorEntity = crearRemitenteEntity(requestEmisor, responseSunat);
-        return emisorMapper.mapEmisorToDTO(emisorRepository.save(emisorEntity));
+        log.info("Procesando ventas en el hilo: " + Thread.currentThread().getName());
+        log.info("Cantidad a procesar: " + 1);
+        try {
+            log.info("Procesando venta de producto: " + requestEmisor.getEmisorRuc() + " en hilo: " + Thread.currentThread().getName());
+            Thread.sleep(1000);
+            ResponseSunat responseSunat = getExecutionSunat(requestEmisor.getEmisorRuc());
+            emisorEntity = crearRemitenteEntity(requestEmisor, responseSunat);
+            emisorRepository.save(emisorEntity);
+            log.info("Venta procesada del producto: " + requestEmisor.getEmisorRuc() + " en hilo: " + Thread.currentThread().getName());
+        } catch (InterruptedException e) {
+            log.error("Error al procesar venta del producto " + requestEmisor.getEmisorRuc() + ": " + e.getMessage());
+        }
+        log.info("Todas las ventas han sido procesadas.");
+        emisorMapper.mapEmisorToDTO(emisorEntity);
     }
     @Override
     public Optional<EmisorDTO> buscarEmisorPorRucOut(String ruc) {

@@ -20,9 +20,9 @@ import java.util.Optional;
 public class EmisorController {
     private final EmisorServiceIn emisorServiceIn;
     @PostMapping("/crear")
-    public ResponseEntity<EmisorDTO> registrarEmisor(@RequestBody @Valid RequestEmisor requestEmisor) {
-        EmisorDTO emisorDTO = emisorServiceIn.crearEmisorIn(requestEmisor);
-        return new ResponseEntity<>(emisorDTO, HttpStatus.CREATED);
+    public ResponseEntity<?> registrarEmisor(@RequestBody @Valid RequestEmisor requestEmisor) {
+        emisorServiceIn.crearEmisorIn(requestEmisor);
+        return new ResponseEntity<>("Emisor Creado", HttpStatus.CREATED);
     }
     @GetMapping("/listar")
     public ResponseEntity<List<EmisorDTO>> listarEmisor() {

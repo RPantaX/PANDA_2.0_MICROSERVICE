@@ -32,8 +32,8 @@ public class SecurityConfiguration {
         http.csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(request -> request.requestMatchers("/api/v1/authentication/**")
                         .permitAll()
-                        .requestMatchers("/api/v1/admin/**").hasAnyAuthority(Role.ADMIN.name())
-                        .requestMatchers("/api/v1/user/**").hasAnyAuthority(Role.USER.name())
+                        .requestMatchers("/api/v1/admin/**", "/v1/ms-guia-transportista").hasAnyAuthority(Role.ADMIN.name())
+                        .requestMatchers("/api/v1/user/**", "/v1/ms-factura").hasAnyAuthority(Role.USER.name())
                         .anyRequest().denyAll())
                 .sessionManagement(manager -> manager.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authenticationProvider(authenticationProvider()).addFilterBefore(
