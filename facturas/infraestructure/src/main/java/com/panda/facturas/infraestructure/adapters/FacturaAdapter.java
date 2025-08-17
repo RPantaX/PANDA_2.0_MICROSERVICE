@@ -19,11 +19,13 @@ import com.panda.facturas.infraestructure.repository.FacturaRepository;
 import com.panda.facturas.infraestructure.rest.client.ClienteSunat;
 import com.panda.facturas.infraestructure.rest.msclient.ClientMSGuiaTranspt;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -34,6 +36,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.concurrent.Executor;
 
 @Service
 @RequiredArgsConstructor
@@ -47,6 +50,8 @@ public class FacturaAdapter implements FacturaServiceOut {
     private final EmisorRepository emisorRepository;
     @Value("${token.api}")
     private String tokenApi;
+    @Qualifier("FacturaTaskExecutor")
+    private final Executor executor;
 
     @Override
     @Transactional
@@ -60,24 +65,49 @@ public class FacturaAdapter implements FacturaServiceOut {
         validarGuiasTransp(requestFactura);
 
         FacturaEntity factura = construirFactura(requestFactura, subTotal, total);
+
         FacturaEntity facturaSaved = facturaRepository.save(factura);
+
+
+
         List<FacturaDetalleEntity> facturaDetalleEntityList = new ArrayList<>();
-        for(RequestFacturaDetalle requestFacturaDetalle : requestFactura.getDetallesFacturas()) {
-            FacturaDetalleEntity facturaDetalleEntity = FacturaDetalleEntity.builder()
-                    .facturaNumero(requestFactura.getFacturaNumero())
-                    .facturaSerie("E001")
-                    .facturaSerienumero("E001" + requestFactura.getFacturaNumero())
-                    .cantidad(requestFacturaDetalle.getCantidad())
-                    .unidadMedida(requestFacturaDetalle.getUnidadMedida())
-                    .descripcion(requestFacturaDetalle.getDescripcion())
-                    .valorUnitario(requestFacturaDetalle.getValorUnitario())
-                    .icbper(requestFacturaDetalle.getIcbper())
-                    .build();
-            facturaDetalleEntityList.add(facturaDetalleEntity);
-        }
+        List<RequestFacturaDetalle> requestFacturaDetalleList = requestFactura.getDetallesFacturas();
+
+        procesarVentaAsync(requestFacturaDetalleList,requestFactura,facturaDetalleEntityList);
 
         facturaDetalleRepository.saveAll(facturaDetalleEntityList);
         return facturaMapper.mapFacturaToDto(facturaSaved);
+    }
+
+
+    @Async("FacturaTaskExecutor")
+    public void procesarVentaAsync(List<RequestFacturaDetalle> requestFacturaDetalleList,RequestFactura requestFactura,List<FacturaDetalleEntity> facturaDetalleEntityList ) {
+        requestFacturaDetalleList.stream().forEach(requestFacturaDetalle -> {
+            executor.execute(() -> {
+                try {
+                    System.out.println("procesando el detalle con descripcion : " + requestFacturaDetalle.getDescripcion() + "  en el hilo " + Thread.currentThread().getName());
+                    Thread.sleep(1000);
+
+                    FacturaDetalleEntity facturaDetalleEntity = FacturaDetalleEntity.builder()
+                            .facturaNumero(requestFactura.getFacturaNumero())
+                            .facturaSerie("E001")
+                            .facturaSerienumero("E001" + requestFactura.getFacturaNumero())
+                            .cantidad(requestFacturaDetalle.getCantidad())
+                            .unidadMedida(requestFacturaDetalle.getUnidadMedida())
+                            .descripcion(requestFacturaDetalle.getDescripcion())
+                            .valorUnitario(requestFacturaDetalle.getValorUnitario())
+                            .icbper(requestFacturaDetalle.getIcbper())
+                            .build();
+
+                    facturaDetalleEntityList.add(facturaDetalleEntity);
+
+                    System.out.println("Factura Procesada en el hilo : " + Thread.currentThread().getName() );
+
+                } catch (Exception e) {
+                    System.err.println("Error al procesar la venta " + requestFacturaDetalle.getDescripcion());
+                }
+            });
+        });
     }
     private void validarEmisor(RequestFactura requestFactura) {
         Optional<EmisorEntity> emisorEntity = emisorRepository.findById(requestFactura.getClienteRuc());
@@ -167,11 +197,14 @@ public class FacturaAdapter implements FacturaServiceOut {
 
     private void validarGuiasTransp(RequestFactura requestFactura) {
         for (String guiaTransp : requestFactura.getGuiaTranspSerieNumero()) {
-            String ultimosCuatroDigitos = guiaTransp.substring(guiaTransp.length() - 4);
-            String primerosNumeros = guiaTransp.substring(0, guiaTransp.length() - 4);
+
+            ///  EG03   264651651
+            String ultimosCuatroDigitos = guiaTransp.substring(4);
+            String primerosNumeros = guiaTransp.substring(0, 4);
+
             try {
                 ResponseGuiaTranspt responseGuiaTranspt = clientMSGuiaTranspt
-                        .listarGuiaTransportistaPorGuiaYSerie(Integer.parseInt(primerosNumeros), ultimosCuatroDigitos);
+                        .listarGuiaTransportistaPorGuiaYSerie(Long.parseLong(ultimosCuatroDigitos), primerosNumeros);
 
                 if (responseGuiaTranspt == null) {
                     System.out.println("Guía no encontrada: " + guiaTransp);
